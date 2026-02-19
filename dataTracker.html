@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iDashboard Pro - Enterprise Analytics</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Dependencies: React, ReactDOM, PropTypes (Mandatory for Recharts UMD), and Babel -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+    <!-- Recharts and Lucide Icons -->
+    <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #F2F2F7;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .apple-shadow {
+            box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.08);
+        }
+
+        .animate-in {
+            animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1em;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d1d1d6;
+            border-radius: 10px;
+        }
+
+        .upload-zone:hover {
+            background-color: rgba(0, 122, 255, 0.05);
+            border-color: #007AFF;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        const Icon = ({ name, size = 20, className = "" }) => {
+            useEffect(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, [name]);
+            return <i data-lucide={name} style={{ width: size, height: size }} className={`inline-block ${className}`}></i>;
+        };
+
+        // Initial Sample Data for the test display
+        const INITIAL_DATA = [
+            {Order_ID:"ORD-1001",Date:"15/01/2024",Region:"North",City:"Chicago",Sales_Rep:"Sarah J.",Product_ID:"P-200",Category:"Laptop",Product_Name:"ProBook X1",Units_Sold:3,Unit_Price:1200,Discount:0.05,Status:"Delivered",Month:"Jan 2024","Net Revenue":3420},
+{Order_ID:"ORD-1002",Date:"16/01/2024",Region:"West",City:"Seattle",Sales_Rep:"Mike R.",Product_ID:"P-105",Category:"Accessories",Product_Name:"Wireless Mouse",Units_Sold:15,Unit_Price:25,Discount:0,Status:"Delivered",Month:"Jan 2024","Net Revenue":375},
+{Order_ID:"ORD-1003",Date:"18/01/2024",Region:"South",City:"Austin",Sales_Rep:"Emily D.",Product_ID:"P-300",Category:"Tablet",Product_Name:"TabUltra 10",Units_Sold:5,Unit_Price:450,Discount:0.1,Status:"Pending",Month:"Jan 2024","Net Revenue":2025},
+{Order_ID:"ORD-1004",Date:"20/01/2024",Region:"East",City:"New York",Sales_Rep:"John S.",Product_ID:"P-400",Category:"Phone",Product_Name:"SmartPhone Z",Units_Sold:2,Unit_Price:800,Discount:0,Status:"Cancelled",Month:"Jan 2024","Net Revenue":1600},
+{Order_ID:"ORD-1005",Date:"22/01/2024",Region:"North",City:"Detroit",Sales_Rep:"Sarah J.",Product_ID:"P-105",Category:"Accessories",Product_Name:"Wireless Mouse",Units_Sold:10,Unit_Price:25,Discount:0.05,Status:"Delivered",Month:"Jan 2024","Net Revenue":237.5},
+{Order_ID:"ORD-1006",Date:"25/01/2024",Region:"West",City:"San Fran",Sales_Rep:"Mike R.",Product_ID:"P-200",Category:"Laptop",Product_Name:"ProBook X1",Units_Sold:1,Unit_Price:1200,Discount:0,Status:"Delivered",Month:"Jan 2024","Net Revenue":1200},
+{Order_ID:"ORD-1007",Date:"28/01/2024",Region:"East",City:"Boston",Sales_Rep:"John S.",Product_ID:"P-500",Category:"Accessories",Product_Name:"Monitor 24in",Units_Sold:4,Unit_Price:200,Discount:0.15,Status:"Delivered",Month:"Jan 2024","Net Revenue":680},
+{Order_ID:"ORD-1008",Date:"30/01/2024",Region:"South",City:"Houston",Sales_Rep:"Emily D.",Product_ID:"P-400",Category:"Phone",Product_Name:"SmartPhone Z",Units_Sold:3,Unit_Price:800,Discount:0.05,Status:"Delivered",Month:"Jan 2024","Net Revenue":2280},
+{Order_ID:"ORD-1009",Date:"02/02/2024",Region:"North",City:"Chicago",Sales_Rep:"Sarah J.",Product_ID:"P-300",Category:"Tablet",Product_Name:"TabUltra 10",Units_Sold:7,Unit_Price:450,Discount:0,Status:"Pending",Month:"Feb 2024","Net Revenue":3150},
+{Order_ID:"ORD-1010",Date:"05/02/2024",Region:"West",City:"Seattle",Sales_Rep:"Mike R.",Product_ID:"P-105",Category:"Accessories",Product_Name:"Wireless Mouse",Units_Sold:20,Unit_Price:25,Discount:0.2,Status:"Delivered",Month:"Feb 2024","Net Revenue":400},
+{Order_ID:"ORD-1011",Date:"08/02/2024",Region:"East",City:"New York",Sales_Rep:"John S.",Product_ID:"P-200",Category:"Laptop",Product_Name:"ProBook X1",Units_Sold:2,Unit_Price:1200,Discount:0,Status:"Delivered",Month:"Feb 2024","Net Revenue":2400},
+{Order_ID:"ORD-1012",Date:"12/02/2024",Region:"South",City:"Austin",Sales_Rep:"Emily D.",Product_ID:"P-500",Category:"Accessories",Product_Name:"Monitor 24in",Units_Sold:6,Unit_Price:200,Discount:0,Status:"Delivered",Month:"Feb 2024","Net Revenue":1200},
+{Order_ID:"ORD-1013",Date:"15/02/2024",Region:"North",City:"Detroit",Sales_Rep:"Sarah J.",Product_ID:"P-400",Category:"Phone",Product_Name:"SmartPhone Z",Units_Sold:4,Unit_Price:800,Discount:0.1,Status:"Cancelled",Month:"Feb 2024","Net Revenue":2880},
+{Order_ID:"ORD-1014",Date:"18/02/2024",Region:"West",City:"San Fran",Sales_Rep:"Mike R.",Product_ID:"P-300",Category:"Tablet",Product_Name:"TabUltra 10",Units_Sold:8,Unit_Price:450,Discount:0.05,Status:"Delivered",Month:"Feb 2024","Net Revenue":3420},
+{Order_ID:"ORD-1015",Date:"20/02/2024",Region:"East",City:"Boston",Sales_Rep:"John S.",Product_ID:"P-105",Category:"Accessories",Product_Name:"Wireless Mouse",Units_Sold:12,Unit_Price:25,Discount:0,Status:"Delivered",Month:"Feb 2024","Net Revenue":300},
+{Order_ID:"ORD-1016",Date:"22/02/2024",Region:"South",City:"Houston",Sales_Rep:"Emily D.",Product_ID:"P-200",Category:"Laptop",Product_Name:"ProBook X1",Units_Sold:1,Unit_Price:1200,Discount:0,Status:"Pending",Month:"Feb 2024","Net Revenue":1200},
+{Order_ID:"ORD-1017",Date:"25/02/2024",Region:"North",City:"Chicago",Sales_Rep:"Sarah J.",Product_ID:"P-500",Category:"Accessories",Product_Name:"Monitor 24in",Units_Sold:5,Unit_Price:200,Discount:0.05,Status:"Delivered",Month:"Feb 2024","Net Revenue":950},
+{Order_ID:"ORD-1018",Date:"28/02/2024",Region:"West",City:"Seattle",Sales_Rep:"Mike R.",Product_ID:"P-400",Category:"Phone",Product_Name:"SmartPhone Z",Units_Sold:3,Unit_Price:800,Discount:0.1,Status:"Delivered",Month:"Feb 2024","Net Revenue":2160},
+{Order_ID:"ORD-1019",Date:"02/03/2024",Region:"East",City:"New York",Sales_Rep:"John S.",Product_ID:"P-300",Category:"Tablet",Product_Name:"TabUltra 10",Units_Sold:6,Unit_Price:450,Discount:0,Status:"Delivered",Month:"Mar 2024","Net Revenue":2700},
+{Order_ID:"ORD-1020",Date:"05/03/2024",Region:"South",City:"Austin",Sales_Rep:"Emily D.",Product_ID:"P-105",Category:"Accessories",Product_Name:"Wireless Mouse",Units_Sold:18,Unit_Price:25,Discount:0.15,Status:"Pending",Month:"Mar 2024","Net Revenue":382.5},
+{Order_ID:"ORD-1021",Date:"08/03/2024",Region:"North",City:"Detroit",Sales_Rep:"Sarah J.",Product_ID:"P-200",Category:"Laptop",Product_Name:"ProBook X1",Units_Sold:2,Unit_Price:1200,Discount:0.05,Status:"Delivered",Month:"Mar 2024","Net Revenue":2280},
+{Order_ID:"ORD-1022",Date:"10/03/2024",Region:"West",City:"San Fran",Sales_Rep:"Mike R.",Product_ID:"P-500",Category:"Accessories",Product_Name:"Monitor 24in",Units_Sold:3,Unit_Price:200,Discount:0,Status:"Cancelled",Month:"Mar 2024","Net Revenue":600}
+        ];
+
+        const App = () => {
+            const { 
+                AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+                BarChart, Bar, Cell, Legend, LabelList
+            } = window.Recharts;
+
+            const [data, setData] = useState(INITIAL_DATA);
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState(null);
+            const [showInputModal, setShowInputModal] = useState(false);
+            const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard' | 'performance' | 'table'
+            const fileInputRef = useRef(null);
+
+            // Filter States
+            const [filterCategory, setFilterCategory] = useState("All");
+            const [filterCity, setFilterCity] = useState("All");
+            const [filterSalesRep, setFilterSalesRep] = useState("All");
+
+            const handleFileUpload = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                setLoading(true);
+                setError(null);
+
+                Papa.parse(file, {
+                    header: true,
+                    skipEmptyLines: true,
+                    dynamicTyping: true,
+                    complete: (results) => {
+                        const parsedData = results.data;
+                        if (parsedData.length > 0 && "Net Revenue" in parsedData[0]) {
+                            setData(parsedData);
+                            setShowInputModal(false);
+                            setCurrentView('dashboard');
+                        } else {
+                            setError("Invalid CSV format. Please ensure column 'Net Revenue' exists.");
+                        }
+                        setLoading(false);
+                    },
+                    error: (err) => {
+                        setError("Failed to read file. Please ensure it is a valid CSV.");
+                        setLoading(false);
+                    }
+                });
+            };
+
+            const filteredData = useMemo(() => {
+                return data.filter(item => {
+                    return (filterCategory === "All" || item.Category === filterCategory) &&
+                           (filterCity === "All" || item.City === filterCity) &&
+                           (filterSalesRep === "All" || item.Sales_Rep === filterSalesRep);
+                });
+            }, [data, filterCategory, filterCity, filterSalesRep]);
+
+            const filterOptions = useMemo(() => {
+                if (!data.length) return { categories: [], cities: [], reps: [] };
+                return {
+                    categories: ["All", ...new Set(data.map(i => i.Category).filter(Boolean))].sort(),
+                    cities: ["All", ...new Set(data.map(i => i.City).filter(Boolean))].sort(),
+                    reps: ["All", ...new Set(data.map(i => i.Sales_Rep).filter(Boolean))].sort()
+                };
+            }, [data]);
+
+            const totalRevenue = useMemo(() => {
+                return filteredData.reduce((acc, curr) => acc + (Number(curr["Net Revenue"]) || 0), 0);
+            }, [filteredData]);
+
+            const cityCategoryData = useMemo(() => {
+                const map = {};
+                filteredData.forEach(item => {
+                    const city = item.City || 'Unknown';
+                    const cat = item.Category || 'Other';
+                    if (!map[city]) map[city] = { city };
+                    map[city][cat] = (map[city][cat] || 0) + (Number(item["Net Revenue"]) || 0);
+                });
+                return Object.values(map).slice(0, 10);
+            }, [filteredData]);
+
+            const itemRevenueData = useMemo(() => {
+                const map = {};
+                filteredData.forEach(item => {
+                    const name = item.Product_Name || 'Unknown';
+                    map[name] = (map[name] || 0) + (Number(item["Net Revenue"]) || 0);
+                });
+                return Object.keys(map)
+                    .map(name => ({ name, revenue: map[name] }))
+                    .sort((a, b) => b.revenue - a.revenue)
+                    .slice(0, 8);
+            }, [filteredData]);
+
+            const repPerformanceData = useMemo(() => {
+                const map = {};
+                filteredData.forEach(item => {
+                    const rep = item.Sales_Rep || 'Unknown';
+                    if (!map[rep]) map[rep] = { name: rep, revenue: 0, count: 0 };
+                    map[rep].revenue += (Number(item["Net Revenue"]) || 0);
+                    map[rep].count += 1;
+                });
+                return Object.values(map).sort((a, b) => b.revenue - a.revenue).slice(0, 10);
+            }, [filteredData]);
+
+            const StatCard = ({ title, value, sub, icon, color, isCurrency = true }) => (
+                <div className="glass p-6 rounded-[28px] apple-shadow flex flex-col justify-between animate-in">
+                    <div className="flex justify-between items-start mb-4">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${color} bg-opacity-10`}>
+                            <Icon name={icon} className={color.replace('bg-', 'text-')} size={20} />
+                        </div>
+                    </div>
+                    <div>
+                        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest leading-none">{title}</p>
+                        <h3 className="text-3xl font-extrabold text-gray-900 mt-2 tabular-nums">
+                            {typeof value === 'number' 
+                                ? (isCurrency ? `₹${value.toLocaleString()}` : value.toLocaleString())
+                                : value}
+                        </h3>
+                        <p className="text-gray-400 text-[10px] mt-1.5 font-medium">{sub}</p>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="min-h-screen">
+                    {/* Header & Sticky Filter Bar */}
+                    <div className="sticky top-0 z-50 glass border-b border-gray-200/40 px-6 py-5">
+                        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                            <div>
+                                <h1 className="text-xl font-extrabold tracking-tight text-gray-900 flex items-center gap-2">
+                                    <span className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
+                                        <Icon name="command" className="text-white" size={16} />
+                                    </span>
+                                    BI Workspace
+                                </h1>
+                            </div>
+
+                            {/* Filters Bar */}
+                            <div className="flex flex-wrap items-center gap-2 lg:gap-3">
+                                <div className="flex items-center gap-2 bg-gray-100/60 rounded-full px-3 py-1.5 border border-gray-200/50">
+                                    <Icon name="filter" size={12} className="text-gray-400" />
+                                    <select 
+                                        value={filterCity}
+                                        onChange={(e) => setFilterCity(e.target.value)}
+                                        className="bg-transparent text-[11px] font-bold text-gray-700 outline-none pr-6 cursor-pointer"
+                                    >
+                                        {filterOptions.cities.map(c => <option key={c} value={c}>{c === 'All' ? 'All Cities' : c}</option>)}
+                                    </select>
+                                </div>
+                                <div className="flex items-center gap-2 bg-gray-100/60 rounded-full px-3 py-1.5 border border-gray-200/50">
+                                    <select 
+                                        value={filterCategory}
+                                        onChange={(e) => setFilterCategory(e.target.value)}
+                                        className="bg-transparent text-[11px] font-bold text-gray-700 outline-none pr-6 cursor-pointer"
+                                    >
+                                        {filterOptions.categories.map(c => <option key={c} value={c}>{c === 'All' ? 'All Categories' : c}</option>)}
+                                    </select>
+                                </div>
+                                <div className="flex items-center gap-2 bg-gray-100/60 rounded-full px-3 py-1.5 border border-gray-200/50">
+                                    <select 
+                                        value={filterSalesRep}
+                                        onChange={(e) => setFilterSalesRep(e.target.value)}
+                                        className="bg-transparent text-[11px] font-bold text-gray-700 outline-none pr-6 cursor-pointer"
+                                    >
+                                        {filterOptions.reps.map(r => <option key={r} value={r}>{r === 'All' ? 'All Reps' : r}</option>)}
+                                    </select>
+                                </div>
+                                <button 
+                                    onClick={() => setShowInputModal(true)}
+                                    className="bg-black text-white px-5 py-1.5 rounded-full text-[11px] font-bold shadow-lg shadow-gray-200 active:scale-95 transition-all ml-2"
+                                >
+                                    <Icon name="upload" size={12} className="mr-2" />
+                                    IMPORT CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <main className="max-w-7xl mx-auto px-6 py-8">
+                        {/* Data Import Modal */}
+                        {showInputModal && (
+                            <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-gray-900/20 backdrop-blur-xl">
+                                <div className="bg-white rounded-[40px] p-10 w-full max-w-lg apple-shadow animate-in">
+                                    <div className="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center mb-8 shadow-xl shadow-blue-100">
+                                        <Icon name="file-text" size={28} />
+                                    </div>
+                                    <h3 className="text-2xl font-extrabold mb-2 text-gray-900">Import Enterprise Data</h3>
+                                    <p className="text-gray-500 text-sm mb-8 leading-relaxed">Select your business CSV to generate a high-fidelity visual report. Header requirements: 'Net Revenue', 'City', 'Category', 'Sales_Rep'.</p>
+                                    
+                                    <div 
+                                        onClick={() => fileInputRef.current.click()}
+                                        className="upload-zone w-full h-48 border-2 border-dashed border-gray-200 rounded-[28px] flex flex-col items-center justify-center cursor-pointer transition-all mb-6 bg-gray-50/50 group"
+                                    >
+                                        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-100 mb-3 group-hover:scale-110 transition-transform">
+                                            <Icon name="plus" size={20} className="text-blue-600" />
+                                        </div>
+                                        <p className="text-sm font-bold text-gray-900">Click to Browse Files</p>
+                                        <p className="text-xs text-gray-400 mt-1">or drag and drop your CSV here</p>
+                                        <input 
+                                            ref={fileInputRef}
+                                            type="file" 
+                                            accept=".csv"
+                                            onChange={handleFileUpload}
+                                            className="hidden"
+                                        />
+                                    </div>
+
+                                    {error && (
+                                        <div className="mb-6 bg-red-50 p-4 rounded-2xl text-red-600 text-[11px] font-bold flex items-center gap-2">
+                                            <Icon name="alert-circle" size={14} /> {error}
+                                        </div>
+                                    )}
+
+                                    <div className="flex gap-4">
+                                        <button 
+                                            onClick={() => setShowInputModal(false)}
+                                            className="flex-1 py-4 rounded-2xl text-sm font-bold bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                        {loading && (
+                                            <div className="flex-1 py-4 flex items-center justify-center text-sm font-bold text-blue-600">
+                                                <Icon name="refresh-cw" size={16} className="animate-spin mr-2" /> Processing...
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="space-y-8">
+                            {/* Summary View (Dashboard) */}
+                            {currentView === 'dashboard' && (
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                        <StatCard 
+                                            title="Total Revenue" 
+                                            value={totalRevenue} 
+                                            sub="Aggregated net sales"
+                                            icon="indian-rupee" 
+                                            color="bg-blue-600"
+                                            isCurrency={true}
+                                        />
+                                        <StatCard 
+                                            title="Transactions" 
+                                            value={filteredData.length} 
+                                            sub="Order count"
+                                            icon="shopping-bag" 
+                                            color="bg-purple-600"
+                                            isCurrency={false}
+                                        />
+                                        <StatCard 
+                                            title="Units Sold" 
+                                            value={filteredData.reduce((a,c) => a + (Number(c.Units_Sold) || 0), 0)} 
+                                            sub="Product volume"
+                                            icon="package" 
+                                            color="bg-pink-600"
+                                            isCurrency={false}
+                                        />
+                                        <StatCard 
+                                            title="Avg. Ticket" 
+                                            value={filteredData.length > 0 ? Math.round(totalRevenue / filteredData.length) : 0} 
+                                            sub="Value per invoice"
+                                            icon="trending-up" 
+                                            color="bg-teal-500"
+                                            isCurrency={true}
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                        {/* City x Category Matrix */}
+                                        <section className="glass p-8 rounded-[40px] apple-shadow animate-in" style={{animationDelay: '0.1s'}}>
+                                            <div className="flex justify-between items-center mb-8">
+                                                <div>
+                                                    <h3 className="font-extrabold text-lg text-gray-900">Region Performance</h3>
+                                                    <p className="text-xs text-gray-400 font-semibold mt-1 uppercase tracking-wider">Revenue by City & Category</p>
+                                                </div>
+                                                <Icon name="map" size={18} className="text-gray-300" />
+                                            </div>
+                                            <div className="h-[360px] w-full">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart data={cityCategoryData} layout="vertical" margin={{ left: 20 }}>
+                                                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F1F5F9" />
+                                                        <XAxis type="number" hide />
+                                                        <YAxis 
+                                                            dataKey="city" 
+                                                            type="category" 
+                                                            axisLine={false} 
+                                                            tickLine={false} 
+                                                            tick={{fill: '#1d1d1f', fontSize: 11, fontWeight: 700}}
+                                                            width={85}
+                                                        />
+                                                        <Tooltip 
+                                                            cursor={{fill: 'rgba(0,0,0,0.02)'}}
+                                                            contentStyle={{borderRadius: '20px', border: 'none', boxShadow: '0 10px 40px rgba(0,0,0,0.1)', fontSize: '11px', fontWeight: 'bold'}}
+                                                        />
+                                                        <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', fontWeight: 700, paddingTop: '24px' }} />
+                                                        {filterOptions.categories.filter(c => c !== 'All').map((cat, i) => (
+                                                            <Bar 
+                                                                key={cat} 
+                                                                dataKey={cat} 
+                                                                stackId="a" 
+                                                                fill={['#007AFF', '#5856D6', '#FF2D55', '#34C759', '#AF52DE'][i % 5]} 
+                                                                radius={i === filterOptions.categories.length - 2 ? [0, 6, 6, 0] : [0, 0, 0, 0]} 
+                                                            />
+                                                        ))}
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </section>
+
+                                        {/* Item Breakdown */}
+                                        <section className="glass p-8 rounded-[40px] apple-shadow animate-in" style={{animationDelay: '0.2s'}}>
+                                            <div className="flex justify-between items-center mb-8">
+                                                <div>
+                                                    <h3 className="font-extrabold text-lg text-gray-900">Product Analysis</h3>
+                                                    <p className="text-xs text-gray-400 font-semibold mt-1 uppercase tracking-wider">Top 8 SKU performance</p>
+                                                </div>
+                                                <Icon name="box" size={18} className="text-gray-300" />
+                                            </div>
+                                            <div className="h-[360px] w-full">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart data={itemRevenueData} margin={{ top: 20 }}>
+                                                        <XAxis 
+                                                            dataKey="name" 
+                                                            axisLine={false} 
+                                                            tickLine={false} 
+                                                            tick={{fontSize: 9, fontWeight: 700, fill: '#8E8E93'}} 
+                                                            tickFormatter={(val) => val && val.length > 10 ? val.substring(0, 8) + '..' : val}
+                                                        />
+                                                        <YAxis hide />
+                                                        <Tooltip 
+                                                            cursor={{fill: 'rgba(0,0,0,0.02)'}}
+                                                            contentStyle={{borderRadius: '20px', border: 'none', boxShadow: '0 10px 40px rgba(0,0,0,0.1)', fontSize: '11px', fontWeight: 'bold'}}
+                                                        />
+                                                        <Bar dataKey="revenue" radius={[14, 14, 14, 14]} barSize={40}>
+                                                            <LabelList 
+                                                                dataKey="revenue" 
+                                                                position="top" 
+                                                                formatter={(val) => `₹${val.toLocaleString()}`} 
+                                                                style={{ fontSize: '10px', fontWeight: 'bold', fill: '#1d1d1f' }}
+                                                            />
+                                                            {itemRevenueData.map((entry, index) => (
+                                                                <Cell key={`cell-${index}`} fill={['#007AFF', '#5856D6', '#AF52DE', '#FF2D55'][index % 4]} />
+                                                            ))}
+                                                        </Bar>
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                        </section>
+                                    </div>
+                                </>
+                            )}
+
+                            {/* Human Capital / Performance View */}
+                            {currentView === 'performance' && (
+                                <section className="glass p-8 rounded-[40px] apple-shadow animate-in">
+                                    <div className="flex justify-between items-center mb-8">
+                                        <div>
+                                            <h3 className="font-extrabold text-lg text-gray-900">Human Capital Index</h3>
+                                            <p className="text-xs text-gray-400 font-semibold mt-1 uppercase tracking-wider">Sales Representative Performance Matrix</p>
+                                        </div>
+                                        <Icon name="users" size={18} className="text-gray-300" />
+                                    </div>
+                                    <div className="overflow-x-auto custom-scrollbar">
+                                        <table className="w-full text-left">
+                                            <thead>
+                                                <tr className="text-[10px] text-gray-400 font-bold uppercase tracking-widest border-b border-gray-100">
+                                                    <th className="pb-4 pl-3">Executive</th>
+                                                    <th className="pb-4">Revenue Contribution</th>
+                                                    <th className="pb-4">Orders</th>
+                                                    <th className="pb-4 text-right pr-3">Gross Revenue</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-50">
+                                                {repPerformanceData.map((rep, idx) => {
+                                                    const share = totalRevenue > 0 ? (rep.revenue / totalRevenue) * 100 : 0;
+                                                    return (
+                                                        <tr key={rep.name} className="group hover:bg-white transition-all duration-300">
+                                                            <td className="py-5 pl-3">
+                                                                <div className="flex items-center gap-4">
+                                                                    <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-blue-50 to-indigo-50 flex items-center justify-center text-[10px] font-extrabold text-blue-600 uppercase shadow-sm border border-white">
+                                                                        {rep.name.substring(0, 2)}
+                                                                    </div>
+                                                                    <span className="text-sm font-bold text-gray-900">{rep.name}</span>
+                                                                </div>
+                                                            </td>
+                                                            <td className="py-5 w-56">
+                                                                <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                                                                    <div 
+                                                                        className="bg-blue-600 h-full rounded-full transition-all duration-1000" 
+                                                                        style={{ width: `${share}%` }}
+                                                                    />
+                                                                </div>
+                                                                <p className="text-[10px] text-gray-400 mt-2 font-bold uppercase">{share.toFixed(1)}% Share</p>
+                                                            </td>
+                                                            <td className="py-5">
+                                                                <span className="bg-gray-100 text-gray-600 px-4 py-1.5 rounded-xl text-[11px] font-bold">
+                                                                    {rep.count} Orders
+                                                                </span>
+                                                            </td>
+                                                            <td className="py-5 text-right pr-3">
+                                                                <span className="text-sm font-extrabold text-gray-900 tabular-nums">
+                                                                    ₹{rep.revenue.toLocaleString()}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </section>
+                            )}
+
+                            {/* Raw Data Table View */}
+                            {currentView === 'table' && (
+                                <section className="glass p-8 rounded-[40px] apple-shadow animate-in overflow-hidden">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h3 className="font-extrabold text-lg text-gray-900">Data Source Explorer</h3>
+                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest bg-gray-100 px-3 py-1 rounded-full">{filteredData.length} records</p>
+                                    </div>
+                                    <div className="overflow-x-auto custom-scrollbar h-[500px]">
+                                        <table className="w-full text-left">
+                                            <thead className="sticky top-0 bg-white/90 backdrop-blur-sm z-10">
+                                                <tr className="text-[10px] text-gray-400 font-bold uppercase tracking-widest border-b border-gray-100">
+                                                    <th className="py-3 px-4">Order ID</th>
+                                                    <th className="py-3 px-4">Date</th>
+                                                    <th className="py-3 px-4">City</th>
+                                                    <th className="py-3 px-4">Rep</th>
+                                                    <th className="py-3 px-4">Product</th>
+                                                    <th className="py-3 px-4 text-right">Revenue</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-50">
+                                                {filteredData.map((row, idx) => (
+                                                    <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
+                                                        <td className="py-3 px-4 text-xs font-bold text-gray-600">{row.Order_ID}</td>
+                                                        <td className="py-3 px-4 text-xs text-gray-500">{row.Date}</td>
+                                                        <td className="py-3 px-4 text-xs font-semibold">{row.City}</td>
+                                                        <td className="py-3 px-4 text-xs text-gray-500">{row.Sales_Rep}</td>
+                                                        <td className="py-3 px-4 text-xs text-gray-500 truncate max-w-[120px]">{row.Product_Name}</td>
+                                                        <td className="py-3 px-4 text-xs font-extrabold text-right tabular-nums text-gray-900">₹{(Number(row["Net Revenue"]) || 0).toLocaleString()}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </section>
+                            )}
+
+                            <div className="text-center pt-10">
+                                <p className="text-[10px] text-gray-300 font-bold uppercase tracking-[0.4em] flex items-center justify-center gap-2">
+                                    <Icon name="check-circle" size={10} />
+                                    Data Architecture Optimized
+                                </p>
+                            </div>
+                        </div>
+                    </main>
+
+                    {/* Floating Navigation Dock - NOW FUNCTIONAL */}
+                    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 glass border border-white/60 px-12 py-5 flex justify-between items-center rounded-[40px] apple-shadow gap-16 animate-in" style={{animationDelay: '0.4s'}}>
+                        <button 
+                            onClick={() => setCurrentView('dashboard')}
+                            className={`flex flex-col items-center gap-1 group transition-all ${currentView === 'dashboard' ? 'text-blue-600' : 'text-gray-300 hover:text-gray-500'}`}
+                        >
+                            <Icon name="layout" size={22} />
+                            <div className={`w-1 h-1 rounded-full transition-all ${currentView === 'dashboard' ? 'bg-blue-600' : 'bg-transparent'}`} />
+                        </button>
+                        
+                        <button 
+                            onClick={() => setCurrentView('performance')}
+                            className={`flex flex-col items-center gap-1 group transition-all ${currentView === 'performance' ? 'text-blue-600' : 'text-gray-300 hover:text-gray-500'}`}
+                        >
+                            <Icon name="activity" size={22} />
+                            <div className={`w-1 h-1 rounded-full transition-all ${currentView === 'performance' ? 'bg-blue-600' : 'bg-transparent'}`} />
+                        </button>
+                        
+                        <button 
+                            onClick={() => setCurrentView('table')}
+                            className={`flex flex-col items-center gap-1 group transition-all ${currentView === 'table' ? 'text-blue-600' : 'text-gray-300 hover:text-gray-500'}`}
+                        >
+                            <Icon name="layers" size={22} />
+                            <div className={`w-1 h-1 rounded-full transition-all ${currentView === 'table' ? 'bg-blue-600' : 'bg-transparent'}`} />
+                        </button>
+                        
+                        <button 
+                            onClick={() => setShowInputModal(true)}
+                            className="flex flex-col items-center gap-1 text-gray-300 hover:text-gray-500 transition-all"
+                        >
+                            <Icon name="settings" size={22} />
+                            <div className="w-1 h-1 rounded-full bg-transparent" />
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

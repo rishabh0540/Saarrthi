@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="referrer" content="no-referrer">
+    
+    <title>Q3 Fitness | Rohini Sec 15 | Premium Gym</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        // Silence environment-level warnings
+        (function() {
+            const originalWarn = console.warn;
+            const originalError = console.error;
+            const ignoreList = ['Permissions-Policy', 'interest-cohort', 'tailwindcss', 'production', 'bluetooth', 'usb'];
+            
+            console.warn = function(...args) {
+                if (typeof args[0] === 'string' && ignoreList.some(term => args[0].includes(term))) return;
+                originalWarn.apply(console, args);
+            };
+            console.error = function(...args) {
+                if (typeof args[0] === 'string' && ignoreList.some(term => args[0].includes(term))) return;
+                originalError.apply(console, args);
+            };
+        })();
+
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#a3e635', // lime-400
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.02); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+        }
+        .hero-glow { 
+            background: radial-gradient(circle at 50% 0%, rgba(163, 230, 53, 0.1) 0%, transparent 70%); 
+        }
+
+        /* Scroll Animation States */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Staggered Delay Utilities */
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        
+        /* Hide scrollbar but keep functionality */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-black text-white selection:bg-brand selection:text-black antialiased overflow-x-hidden">
+
+    <!-- Nav -->
+    <nav class="fixed top-0 w-full z-50 bg-black/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="bg-brand p-1 rounded-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>
+                </div>
+                <span class="font-black text-lg tracking-tighter italic uppercase">Q3 Fitness</span>
+            </div>
+            
+            <div class="hidden md:flex gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">
+                <a href="#services" class="hover:text-brand transition-colors">Services</a>
+                <a href="#gallery" class="hover:text-brand transition-colors">Gallery</a>
+                <a href="#plans" class="hover:text-brand transition-colors">Pricing</a>
+                <a href="#contact" class="hover:text-brand transition-colors">Location</a>
+            </div>
+
+            <button id="menuToggle" class="md:hidden p-2">
+                <svg id="menuIco" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileNav" class="fixed inset-0 z-40 bg-black hidden flex-col pt-24 px-10">
+        <div class="flex flex-col gap-10 text-4xl font-black italic uppercase tracking-tighter">
+            <a href="#services" class="close-nav">Services</a>
+            <a href="#gallery" class="close-nav">Gallery</a>
+            <a href="#plans" class="close-nav">Pricing</a>
+            <a href="#contact" class="close-nav">Location</a>
+            <hr class="border-white/10 my-4">
+            <div class="flex gap-6">
+                <a href="https://instagram.com/therishabhsh" class="text-brand text-sm tracking-widest uppercase">Instagram</a>
+                <a href="tel:9810974035" class="text-brand text-sm tracking-widest uppercase">Call Us</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero -->
+    <section class="relative pt-40 pb-20 px-6 hero-glow min-h-[80vh] flex items-center">
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            <div class="reveal inline-flex items-center gap-2 bg-brand/10 border border-brand/20 text-brand px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-8">
+                Now Open Rohini Sec 15
+            </div>
+            <h1 class="reveal delay-100 text-6xl md:text-[110px] font-black leading-[0.85] italic uppercase tracking-tighter mb-8">
+                REDEFINE <br> <span class="text-brand">YOURSELF.</span>
+            </h1>
+            <p class="reveal delay-200 text-neutral-400 text-lg md:text-xl max-w-xl mx-auto mb-12 font-medium leading-relaxed">
+                Step into Rohini's most advanced fitness arena. We don't just provide machines; we build results.
+            </p>
+            <div class="reveal delay-300">
+                <a href="https://wa.me/919810974035?text=Hi%20Q3%20Fitness,%20I'd%20like%20to%20book%20a%20free%20trial." 
+                   class="bg-brand text-black px-12 py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-3 hover:brightness-110 transition-all shadow-xl shadow-brand/20">
+                    GET FREE TRIAL
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-24 px-6 bg-neutral-950">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-12 reveal">
+                <h2 class="text-4xl font-black italic uppercase tracking-tighter">INSIDE THE <span class="text-brand">ARENA</span></h2>
+                <p class="text-neutral-500 text-sm mt-2">Premium equipment and high-energy atmosphere.</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="reveal-scale overflow-hidden rounded-3xl h-64 bg-neutral-900 border border-white/5 relative group">
+                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80" alt="Gym Floor" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity">
+                    <div class="absolute bottom-4 left-4 font-black italic uppercase text-[10px] tracking-widest">Main Floor</div>
+                </div>
+                <div class="reveal-scale delay-100 overflow-hidden rounded-3xl h-64 bg-neutral-900 border border-white/5 md:row-span-2 md:h-full relative group">
+                    <img src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=800&q=80" alt="Cardio Zone" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity">
+                    <div class="absolute bottom-4 left-4 font-black italic uppercase text-[10px] tracking-widest">Cardio Elite</div>
+                </div>
+                <div class="reveal-scale delay-200 overflow-hidden rounded-3xl h-64 bg-neutral-900 border border-white/5 relative group">
+                    <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=800&q=80" alt="Dumbbells" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity">
+                    <div class="absolute bottom-4 left-4 font-black italic uppercase text-[10px] tracking-widest">Free Weights</div>
+                </div>
+                <div class="reveal-scale delay-300 overflow-hidden rounded-3xl h-64 bg-neutral-900 border border-white/5 relative group">
+                    <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=800&q=80" alt="Zumba" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity">
+                    <div class="absolute bottom-4 left-4 font-black italic uppercase text-[10px] tracking-widest">Studio space</div>
+                </div>
+                <!-- Row 2 -->
+                <div class="reveal-scale delay-100 overflow-hidden rounded-3xl h-64 bg-neutral-900 border border-white/5 relative group">
+                    <img src="https://images.unsplash.com/photo-1593079831268-3381b0db4a77?auto=format&fit=crop&w=800&q=80" alt="Leg Press" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity">
+                </div>
+                <div class="reveal-scale delay-200 overflow-hidden rounded-3xl h-64 bg-neutral-900 border border-white/5 relative group md:col-span-2 md:h-64">
+                    <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80" alt="Gym Vibes" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-24 px-6 bg-black">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl font-black italic uppercase tracking-tighter">VOICE OF THE <span class="text-brand">COMMUNITY</span></h2>
+                <p class="text-neutral-500 text-sm mt-2">Real results from your neighbors in Rohini.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Testimonial 1 -->
+                <div class="reveal glass-card p-8 rounded-[2.5rem] relative">
+                    <div class="flex gap-1 mb-6 text-brand">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                    </div>
+                    <p class="text-neutral-300 italic mb-8 leading-relaxed">"Best gym in Rohini Sec 15. The trainers are actually helpful and don't just push expensive supplements. Love the Zumba sessions!"</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-neutral-800 border border-white/10"></div>
+                        <div>
+                            <div class="font-black italic uppercase text-xs">Arjun K.</div>
+                            <div class="text-[10px] text-neutral-500 uppercase tracking-widest">Member since 2023</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="reveal delay-100 glass-card p-8 rounded-[2.5rem]">
+                    <div class="flex gap-1 mb-6 text-brand">
+                         <!-- Stars ... -->
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                    </div>
+                    <p class="text-neutral-300 italic mb-8 leading-relaxed">"Cleanliness is 10/10. The equipment is modern and the crowd is very decent. Perfect for someone looking for a serious workout spot."</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-neutral-800 border border-white/10"></div>
+                        <div>
+                            <div class="font-black italic uppercase text-xs">Priya Sharma</div>
+                            <div class="text-[10px] text-neutral-500 uppercase tracking-widest">Morning Batch</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="reveal delay-200 glass-card p-8 rounded-[2.5rem]">
+                    <div class="flex gap-1 mb-6 text-brand">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg>
+                    </div>
+                    <p class="text-neutral-300 italic mb-8 leading-relaxed">"Changed my lifestyle. The transformation was slow but steady. Q3 gave me the right discipline. Highly recommended!"</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-neutral-800 border border-white/10"></div>
+                        <div>
+                            <div class="font-black italic uppercase text-xs">Vikram Singh</div>
+                            <div class="text-[10px] text-neutral-500 uppercase tracking-widest">Premium Member</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-24 px-6 bg-neutral-950/50">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-16 reveal">
+                <h2 class="text-4xl font-black italic uppercase tracking-tighter">WHAT WE <span class="text-brand">OFFER</span></h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="reveal glass-card p-10 rounded-[2.5rem] group hover:bg-white/5 transition-all">
+                    <div class="mb-6 text-brand">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>
+                    </div>
+                    <h3 class="text-2xl font-black italic uppercase mb-4 tracking-tighter">Strength Training</h3>
+                    <p class="text-neutral-500 text-sm leading-relaxed">High-grade plates, Olympic bars, and machines designed for maximum muscle isolation.</p>
+                </div>
+
+                <div class="reveal delay-100 glass-card p-10 rounded-[2.5rem] group hover:bg-white/5 transition-all">
+                    <div class="mb-6 text-brand">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    </div>
+                    <h3 class="text-2xl font-black italic uppercase mb-4 tracking-tighter">Zumba & Cardio</h3>
+                    <p class="text-neutral-500 text-sm leading-relaxed">Burn calories with high-energy group sessions led by certified instructors.</p>
+                </div>
+
+                <div class="reveal delay-200 glass-card p-10 rounded-[2.5rem] group hover:bg-white/5 transition-all">
+                    <div class="mb-6 text-brand">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    </div>
+                    <h3 class="text-2xl font-black italic uppercase mb-4 tracking-tighter">Elite Coaching</h3>
+                    <p class="text-neutral-500 text-sm leading-relaxed">Personal attention to ensure your form is correct and your goals are on track.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="plans" class="py-24 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-5xl md:text-7xl font-black italic uppercase tracking-tighter">PRICING</h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 items-center">
+                <!-- Plan 1 -->
+                <div class="reveal glass-card p-10 rounded-[3rem] flex flex-col">
+                    <h4 class="text-neutral-500 font-black uppercase text-[10px] tracking-[0.3em] mb-4">Silver</h4>
+                    <div class="text-5xl font-black italic mb-8">₹2,500 <span class="text-sm font-normal italic opacity-40">/mo</span></div>
+                    <ul class="space-y-4 mb-12 flex-grow text-[10px] font-black uppercase italic text-neutral-400">
+                        <li>• Complete Access</li>
+                        <li>• Locker Service</li>
+                        <li>• Floor Trainers</li>
+                    </ul>
+                    <a href="https://wa.me/919810974035?text=Hi%20Q3%20Fitness,%20interested%20in%20the%201%20Month%20Plan." class="w-full py-5 bg-white text-black text-center rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-brand">Select Plan</a>
+                </div>
+                <!-- Plan 2 -->
+                <div class="reveal delay-100 bg-brand p-12 rounded-[3.5rem] flex flex-col relative md:scale-110 shadow-2xl shadow-brand/20">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-black text-white px-4 py-1 rounded-full text-[8px] font-black uppercase">Best Value</div>
+                    <h4 class="text-black/60 font-black uppercase text-[10px] tracking-[0.3em] mb-4">Gold</h4>
+                    <div class="text-6xl font-black italic mb-8 text-black">₹6,000 <span class="text-sm font-black italic opacity-40">/3mo</span></div>
+                    <ul class="space-y-4 mb-12 flex-grow text-xs font-black uppercase italic text-black">
+                        <li>• Gym + Zumba Access</li>
+                        <li>• 1 PT Session</li>
+                        <li>• Guest Passes</li>
+                    </ul>
+                    <a href="https://wa.me/919810974035?text=Hi%20Q3%20Fitness,%20interested%20in%20the%203%20Month%20Plan." class="w-full py-5 bg-black text-white text-center rounded-2xl font-black uppercase text-xs tracking-widest hover:brightness-110">Book Now</a>
+                </div>
+                <!-- Plan 3 -->
+                <div class="reveal delay-200 glass-card p-10 rounded-[3rem] flex flex-col">
+                    <h4 class="text-neutral-500 font-black uppercase text-[10px] tracking-[0.3em] mb-4">Platinum</h4>
+                    <div class="text-5xl font-black italic mb-8">₹18,000 <span class="text-sm font-normal italic opacity-40">/yr</span></div>
+                    <ul class="space-y-4 mb-12 flex-grow text-[10px] font-black uppercase italic text-neutral-400">
+                        <li>• Annual Pack</li>
+                        <li>• Nutrition Plan</li>
+                        <li>• Elite Kit Bag</li>
+                    </ul>
+                    <a href="https://wa.me/919810974035?text=Hi%20Q3%20Fitness,%20interested%20in%20the%20Annual%20Plan." class="w-full py-5 bg-white text-black text-center rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-brand">Select Plan</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Location -->
+    <section id="contact" class="py-24 px-6 bg-neutral-950">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+            <div class="space-y-12">
+                <h2 class="reveal text-5xl font-black italic uppercase tracking-tighter">THE <span class="text-brand">STUDIO</span></h2>
+                <div class="space-y-10">
+                    <div class="reveal delay-100 flex gap-6 items-start">
+                        <div class="bg-brand/10 p-4 rounded-2xl border border-brand/20 text-brand">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1">Hours</p>
+                            <p class="text-2xl font-black uppercase italic">05:00 AM - 10:00 PM</p>
+                            <p class="text-neutral-500 font-bold uppercase text-[10px]">Mon-Sat (Closed Sun)</p>
+                        </div>
+                    </div>
+                    <div class="reveal delay-200 flex gap-6 items-start">
+                        <div class="bg-brand/10 p-4 rounded-2xl border border-brand/20 text-brand">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1">Location</p>
+                            <p class="text-2xl font-black uppercase italic">Sector 15, Rohini, Delhi</p>
+                            <a href="https://maps.app.goo.gl/oQY2gTSq2rb4Xiv86" target="_blank" class="text-brand font-black underline uppercase text-xs tracking-widest mt-2 block">Directions</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="https://maps.app.goo.gl/oQY2gTSq2rb4Xiv86" target="_blank" class="reveal-scale block h-[400px] bg-neutral-900 rounded-[3rem] border border-white/5 relative overflow-hidden group">
+                <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all z-10 flex items-center justify-center">
+                    <span class="bg-white text-black px-8 py-3 rounded-full font-black text-xs uppercase shadow-2xl tracking-widest">Open Maps</span>
+                </div>
+                <div class="w-full h-full flex items-center justify-center opacity-20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#a3e635" stroke-width="1"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 border-t border-white/5 text-center pb-32">
+        <div class="reveal flex justify-center gap-6 mb-8">
+            <a href="https://instagram.com/therishabhsh" target="_blank" class="p-4 bg-white/5 rounded-full border border-white/10 hover:text-brand">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+        </div>
+        <p class="text-[9px] font-black uppercase tracking-[0.5em] text-neutral-700 italic">© 2024 Q3 Fitness • Rohini</p>
+    </footer>
+
+    <!-- Mobile Action Bar -->
+    <div class="md:hidden fixed bottom-8 left-6 right-6 z-50 flex gap-2">
+        <a href="tel:9810974035" class="flex-1 bg-white text-black py-5 rounded-2xl font-black text-sm text-center shadow-2xl">CALL</a>
+        <a href="https://wa.me/919810974035?text=Hi%20Q3%20Fitness,%20inquiring%20about%20plans." class="flex-1 bg-brand text-black py-5 rounded-2xl font-black text-sm text-center shadow-2xl shadow-brand/20">WHATSAPP</a>
+    </div>
+
+    <script>
+        // Scroll Animations
+        const observerOptions = { threshold: 0.15, rootMargin: '0px 0px -50px 0px' };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal, .reveal-scale').forEach((el) => observer.observe(el));
+
+        // Nav Toggle
+        const navToggle = document.getElementById('menuToggle');
+        const sideNav = document.getElementById('mobileNav');
+        const menuIcon = document.getElementById('menuIco');
+        const navLinks = document.querySelectorAll('.close-nav');
+        let active = false;
+
+        function handleMenu() {
+            active = !active;
+            sideNav.classList.toggle('hidden');
+            sideNav.classList.toggle('flex');
+            menuIcon.innerHTML = active 
+                ? '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>' 
+                : '<line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/>';
+            document.body.style.overflow = active ? 'hidden' : 'auto';
+        }
+
+        navToggle.addEventListener('click', handleMenu);
+        navLinks.forEach(l => l.addEventListener('click', handleMenu));
+    </script>
+</body>
+</html>
+

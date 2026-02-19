@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGF Shaktinagar | Best Soya Chaap & Pure Veg North Indian Restaurant</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="SGF Shaktinagar - India's most trusted Soya Chaap specialists. 100% Pure Veg, No Palm Oil, open till 3 AM. Best North Indian restaurant for families and kitty parties in Shakti Nagar, Delhi.">
+    <meta name="keywords" content="Soya Chaap Shaktinagar, Soya Chaap, Tandoori Food, Tandoori Momos, Pure Veg Restaurant Shaktinagar, North Indian food Delhi, Best Paneer Tikka Shakti Nagar, Kitty Party Venue Shaktinagar, Late night food Delhi, SGF Shaktinagar menu, Veg restaurant near Kamla Nagar">
+    <meta name="author" content="SGF Shaktinagar">
+    <link rel="canonical" href="https://sgfshaktinagar.com">
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --apple-red: #e11d48;
+            --apple-green: #10b981;
+        }
+        body { 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            background-color: #f5f5f7; 
+            color: #1d1d1f;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .apple-glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .tab-active { color: var(--apple-red); position: relative; }
+        .tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: var(--apple-red);
+            border-radius: 50%;
+        }
+        
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-apple { animation: slideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        .shadow-apple { box-shadow: 0 4px 24px rgba(0,0,0,0.04); }
+        
+        /* Custom styles for category/subcategory pills */
+        .subcat-pill {
+            white-space: nowrap;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s;
+            border: 1px solid #e5e7eb;
+            background: white;
+            color: #6b7280;
+        }
+        .subcat-pill-active {
+            background: var(--apple-red);
+            color: white;
+            border-color: var(--apple-red);
+            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useCallback } = React;
+
+        // --- Custom Icon Component ---
+        const Icon = ({ name, className = "w-5 h-5", fill = "none" }) => {
+            const icons = {
+                flame: <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.214 1.14-3.026C7 14.5 8.5 14.5 8.5 14.5z"/>,
+                clock: <><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>,
+                zap: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>,
+                "utensils-crossed": <><path d="m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8"/><path d="M15 15 3.3 3.3a2 2 0 1 0-2.8 2.8L12.2 17.8a2 2 0 0 0 2.8 0l1.8-1.8"/><path d="m18 18 4 4"/><path d="m2 22 4-4"/><path d="M8 8v7a3 3 0 0 0 6 0V8"/><line x1="11" x2="11" y1="2" y2="5"/><line x1="8" x2="8" y1="2" y2="5"/><line x1="14" x2="14" y1="2" y2="5"/></>,
+                utensils: <><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></>,
+                "chef-hat": <><path d="M6 18h12"/><path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/><path d="M4 18a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2Z"/><path d="M12 12v3"/><path d="M12 4c2.209 0 4 1.791 4 4v2H8V8c0-2.209 1.791-4 4-4Z"/></>,
+                search: <><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></>,
+                "chevron-down": <polyline points="6 9 12 15 18 9"/>,
+                "chevron-right": <polyline points="9 18 15 12 9 6"/>,
+                minus: <line x1="5" x2="19" y1="12" y2="12"/>,
+                plus: <><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></>,
+                "message-circle": <path d="m3 21 1.9-1.9A9 9 0 1 1 21 12.4a9 9 0 0 1-18 8.6Z"/>,
+                instagram: <><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></>,
+                facebook: <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>,
+                "map-pin": <><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></>,
+                phone: <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>,
+                x: <><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></>,
+                "shopping-bag": <><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></>,
+                "shield-check": <><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></>,
+                "arrow-right": <><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></>,
+                music: <><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></>,
+                star: <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>,
+                gift: <><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" x2="12" y1="22" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></>,
+                users: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>
+            };
+
+            return (
+                <svg 
+                    viewBox="0 0 24 24" 
+                    fill={fill} 
+                    stroke="currentColor" 
+                    strokeWidth="2.5" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    className={className}
+                >
+                    {icons[name] || null}
+                </svg>
+            );
+        };
+
+        // --- Sub-Views ---
+        const HomeView = ({ setView }) => {
+            const handleOfferClick = (offerName) => {
+                const msg = `Hi SGF Shaktinagar, I'm interested in the ${offerName} offer!`;
+                window.open(`https://wa.me/918860950400?text=${encodeURIComponent(msg)}`);
+            };
+
+            const socials = [
+                { name: 'instagram', url: 'https://www.instagram.com/sgf.shaktinagar', color: 'text-pink-600' },
+                { name: 'facebook', url: 'https://www.facebook.com/share/183maP3xiM/', color: 'text-blue-600' }
+            ];
+
+            return (
+                <div className="animate-apple px-6 pt-8 pb-24">
+                    <div className="bg-white rounded-[2rem] p-8 shadow-apple mb-8 border border-white/50 relative overflow-hidden">
+                        <div className="relative z-10">
+                            <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase mb-4 inline-block">
+                                100% Pure Veg
+                            </span>
+                            <h2 className="text-3xl font-black leading-tight mb-2 tracking-tighter">Soya Chaap<br/>Specialists</h2>
+                            <p className="text-sm text-gray-400 font-medium mb-6">Experience India's most trusted Pure Veg Food Chain in Shakti Nagar.</p>
+			    <p className="text-sm text-gray-400 font-medium mb-6">Perfect for <b>family gatherings, kitty/birthday parties</b>, friends hangout.</p>
+                            <div className="flex gap-4">
+                                <button onClick={() => setView('menu')} className="bg-rose-600 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl shadow-rose-100 transition-transform active:scale-95">Order Now</button>
+                                <button onClick={() => setView('party')} className="bg-gray-100 text-gray-900 px-6 py-3 rounded-2xl font-bold text-sm transition-transform active:scale-95">Book Party</button>
+                            </div>
+                        </div>
+                        <div className="absolute -right-8 -bottom-8 opacity-5 z-0">
+                            <Icon name="utensils-crossed" className="w-48 h-48" />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mb-8">
+                        <div className="bg-white p-6 rounded-[2rem] shadow-apple border border-gray-50">
+                            <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4">
+                                <Icon name="clock" />
+                            </div>
+                            <h3 className="font-bold text-sm mb-1">Open Late</h3>
+                            <p className="text-[10px] text-gray-400">Serving till 3:00 AM every night.</p>
+                        </div>
+                        <div className="bg-white p-6 rounded-[2rem] shadow-apple border border-gray-50">
+                            <div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center mb-4">
+                                <Icon name="zap" />
+                            </div>
+                            <h3 className="font-bold text-sm mb-1">Healthy Choice</h3>
+                            <p className="text-[10px] text-gray-400">Zero Palm Oil policy across menu.</p>
+                        </div>
+                    </div>
+
+                    <h3 className="font-black text-lg mb-4 px-2">Running Offers</h3>
+                    <div className="flex gap-4 overflow-x-auto no-scrollbar pb-10">
+                        <div 
+                            onClick={() => handleOfferClick('B1G1 FREE (Dining Only)')}
+                            className="min-w-[280px] bg-gradient-to-br from-rose-500 to-rose-700 p-6 rounded-[2rem] text-white shadow-xl cursor-pointer active:scale-95 transition-transform"
+                        >
+                            <p className="text-[10px] font-black uppercase opacity-70 mb-1">Dining Only</p>
+                            <h4 className="text-xl font-black mb-1">B1G1 FREE</h4>
+                            <p className="text-xs font-medium opacity-90">Buy 1 Get 1 on Chinese & Tandoori Snacks. (12 PM - 7 PM)</p>
+                            <div className="mt-4 flex items-center gap-2 text-[10px] font-bold">Avail via WhatsApp <Icon name="arrow-right" className="w-3 h-3" /></div>
+                        </div>
+                        <div 
+                            onClick={() => handleOfferClick('10% Table Pre-Booking')}
+                            className="min-w-[280px] bg-gradient-to-br from-emerald-500 to-teal-700 p-6 rounded-[2rem] text-white shadow-xl cursor-pointer active:scale-95 transition-transform"
+                        >
+                            <p className="text-[10px] font-black uppercase opacity-70 mb-1">Reservation</p>
+                            <h4 className="text-xl font-black mb-1">Pre-Booking OFF</h4>
+                            <p className="text-xs font-medium opacity-90">Flat 10% OFF on your total bill when you pre-book a table.</p>
+                            <div className="mt-4 flex items-center gap-2 text-[10px] font-bold">Book Your Table <Icon name="arrow-right" className="w-3 h-3" /></div>
+                        </div>
+                    </div>
+
+                    {/* Footer Section */}
+                    <div className="mt-12 bg-white rounded-[2rem] p-8 shadow-apple border border-gray-100 text-center">
+                        <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-6">Connect With SGF</h4>
+                        <div className="flex justify-center gap-8 mb-8">
+                            {socials.map(social => (
+                                <a 
+                                    key={social.name} 
+                                    href={social.url} 
+                                    target="_blank" 
+                                    className={`p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:scale-110 active:scale-90 transition-all ${social.color}`}
+                                >
+                                    <Icon name={social.name} className="w-6 h-6" />
+                                </a>
+                            ))}
+                        </div>
+                        <div className="space-y-4">
+                            <a 
+                                href="https://maps.app.goo.gl/U6Aq5JtuxNpQeuTq5" 
+                                target="_blank"
+                                className="w-full bg-slate-900 text-white py-4 px-6 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-center leading-tight"
+                            >
+                                <Icon name="map-pin" className="w-4 h-4 shrink-0" /> Visit Now (Review on Maps as well)
+                            </a>
+                            <a 
+                                href="https://forms.gle/pTyGcNfzHNAvA4uh9" 
+                                target="_blank"
+                                className="w-full bg-emerald-50 text-emerald-700 border border-emerald-100 py-4 px-6 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all"
+                            >
+                                <Icon name="message-circle" className="w-4 h-4 shrink-0" /> Give direct feedback to owners
+                            </a>
+                            <a 
+                                href="tel:918860950400" 
+                                className="w-full bg-white text-rose-600 border border-rose-100 py-4 px-6 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all"
+                            >
+                                <Icon name="phone" className="w-4 h-4 shrink-0" /> Call Us Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const MenuView = ({ 
+            filteredMenu, searchQuery, setSearchQuery, 
+            isCatOpen, setIsCatOpen, activeCategory, setActiveCategory, 
+            activeSubCategory, setActiveSubCategory,
+            categories, subCategories,
+            getItemQty, removeFromCart, addToCart 
+        }) => {
+            return (
+                <div className="animate-apple pb-40">
+                    <div className="p-6">
+                        {/* Suggestive Search */}
+                        <div className="relative mb-6">
+                            <input 
+                                type="text" 
+                                placeholder="Search for chaap, momos or gravy..." 
+                                className="w-full bg-white rounded-[1.5rem] py-4 px-14 text-sm font-medium border border-gray-100 shadow-apple outline-none focus:ring-2 focus:ring-rose-500/20 transition-all"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                            />
+                            <div className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400">
+                                <Icon name="search" />
+                            </div>
+                        </div>
+
+                        {/* Category Dropdown (Primary Filter) */}
+                        <div className="relative mb-4">
+                            <button 
+                                onClick={() => setIsCatOpen(!isCatOpen)}
+                                className="w-full bg-white px-6 py-4 rounded-2xl border border-gray-100 shadow-apple flex items-center justify-between text-xs font-black uppercase tracking-widest text-slate-800 transition-all active:scale-98"
+                            >
+                                <span className="flex items-center gap-2">
+                                    <Icon name="utensils" className="w-4 h-4 text-rose-600" />
+                                    {activeCategory}
+                                </span>
+                                <Icon name="chevron-down" className={`w-4 h-4 transition-transform ${isCatOpen ? 'rotate-180' : ''}`} />
+                            </button>
+                            {isCatOpen && (
+                                <div className="absolute top-full left-0 right-0 mt-2 bg-white/95 backdrop-blur-xl border border-gray-100 rounded-3xl shadow-2xl z-[150] overflow-hidden animate-apple">
+                                    {categories.map(cat => (
+                                        <button 
+                                            key={cat} 
+                                            className={`w-full text-left px-6 py-4 text-xs font-bold transition-colors border-b last:border-0 border-gray-50 ${activeCategory === cat ? 'bg-rose-50 text-rose-600' : 'hover:bg-gray-50 text-gray-600'}`}
+                                            onClick={() => { setActiveCategory(cat); setActiveSubCategory('All'); setIsCatOpen(false); }}
+                                        >
+                                            {cat}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Subcategory Buttons (Secondary Filter) */}
+                        <div className="flex gap-2 overflow-x-auto no-scrollbar py-2 mb-8">
+                            <button 
+                                onClick={() => setActiveSubCategory('All')}
+                                className={`subcat-pill ${activeSubCategory === 'All' ? 'subcat-pill-active' : ''}`}
+                            >
+                                All
+                            </button>
+                            {subCategories.map(sub => (
+                                <button 
+                                    key={sub}
+                                    onClick={() => setActiveSubCategory(sub)}
+                                    className={`subcat-pill ${activeSubCategory === sub ? 'subcat-pill-active' : ''}`}
+                                >
+                                    {sub}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Menu Items */}
+                        <div className="space-y-6">
+                            {filteredMenu.length === 0 ? (
+                                <div className="text-center py-20 bg-white rounded-[2rem] border border-dashed border-gray-200">
+                                    <p className="text-gray-400 font-bold">No items found.</p>
+                                </div>
+                            ) : (
+                                filteredMenu.map(item => (
+                                    <div key={item.id} className="bg-white p-6 rounded-[2.5rem] shadow-apple border border-gray-50 flex flex-col gap-4 group hover:border-rose-100 transition-colors">
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    {item.tag && <span className="text-[8px] font-black bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full uppercase tracking-widest">{item.tag}</span>}
+                                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{item.subCategory}</span>
+                                                </div>
+                                                <h4 className="text-lg font-black text-gray-900 mb-1 leading-tight">{item.name}</h4>
+                                                <p className="text-[10px] text-gray-400 font-medium leading-relaxed italic">{item.desc || "SGF Shaktinagar Authentic Recipe."}</p>
+                                            </div>
+                                            <div className="text-right shrink-0">
+                                                {item.price && <p className="font-black text-rose-600 text-lg">₹{item.price}</p>}
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between pt-4 border-t border-gray-50">
+                                            <div className="flex flex-wrap gap-x-4 gap-y-4 w-full">
+                                                {item.prices ? (
+                                                    Object.keys(item.prices).map(size => (
+                                                        <div key={size} className="flex flex-col items-start min-w-[80px]">
+                                                            <span className="text-[8px] font-black text-gray-400 uppercase mb-1">{size} <span className="text-rose-600 tracking-normal">• ₹{item.prices[size]}</span></span>
+                                                            <div className="flex items-center bg-gray-50 rounded-xl px-2 py-1 border border-gray-100 w-full justify-between">
+                                                                {getItemQty(item.id, size) > 0 ? (
+                                                                    <>
+                                                                        <button onClick={() => removeFromCart(`${item.id}-${size}`)} className="p-1 text-gray-500 hover:text-rose-600 transition-colors"><Icon name="minus" className="w-3 h-3" /></button>
+                                                                        <span className="px-2 text-xs font-bold text-gray-900">{getItemQty(item.id, size)}</span>
+                                                                        <button onClick={() => addToCart(item, size, item.prices[size])} className="p-1 text-rose-600 hover:text-rose-700 transition-colors"><Icon name="plus" className="w-3 h-3" /></button>
+                                                                    </>
+                                                                ) : (
+                                                                    <button onClick={() => addToCart(item, size, item.prices[size])} className="w-full py-1 text-[10px] font-black text-rose-600 uppercase hover:text-rose-700 transition-all text-center">Add</button>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <div className="flex items-center bg-gray-50 rounded-xl px-2 py-1 border border-gray-100">
+                                                        {getItemQty(item.id, 'Full') > 0 ? (
+                                                            <>
+                                                                <button onClick={() => removeFromCart(`${item.id}-Full`)} className="p-2 text-gray-500 hover:text-rose-600 transition-colors"><Icon name="minus" className="w-4 h-4" /></button>
+                                                                <span className="px-4 text-sm font-bold text-gray-900">{getItemQty(item.id, 'Full')}</span>
+                                                                <button onClick={() => addToCart(item, 'Full', item.price)} className="p-2 text-rose-600 hover:text-rose-700 transition-colors"><Icon name="plus" className="w-4 h-4" /></button>
+                                                            </>
+                                                        ) : (
+                                                            <button onClick={() => addToCart(item, 'Full', item.price)} className="px-8 py-2 text-xs font-black text-rose-600 uppercase hover:text-rose-700 transition-all">Add To Cart</button>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const PartyPackagesView = ({ partyPackages }) => (
+            <div className="animate-apple p-6 pb-32">
+                <div className="bg-emerald-50 rounded-[2rem] p-6 mb-8 border border-emerald-100 flex items-center gap-4">
+                    <div className="bg-emerald-600 p-3 rounded-2xl text-white shadow-lg"><Icon name="users" className="w-6 h-6" /></div>
+                    <div>
+                        <h4 className="font-bold text-emerald-900">Minimum 30 People</h4>
+                        <p className="text-[10px] text-emerald-700 font-medium">Guarantee for party package bookings at Shakti Nagar.</p>
+                    </div>
+                </div>
+
+                <div className="bg-rose-50 border border-rose-100 rounded-[2rem] p-6 mb-8 text-center">
+                    <p className="text-xs font-black uppercase text-rose-600 tracking-widest mb-1">Host Your Next Event</p>
+                    <h3 className="text-xl font-black text-slate-800">Perfect for <span className="underline decoration-rose-400">Kitty Parties</span></h3>
+                    <p className="text-sm font-medium text-rose-500 mt-1 italic">"The ultimate hangout for aunties who love great food and vibes!"</p>
+                </div>
+
+                {/* SGF Party USPs */}
+                <div className="grid grid-cols-1 gap-4 mb-12">
+                    <div className="bg-white p-6 rounded-[2rem] shadow-apple border border-gray-100 flex items-center gap-4">
+                        <div className="w-10 h-10 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center shrink-0"><Icon name="clock" /></div>
+                        <div>
+                            <h5 className="text-xs font-black uppercase tracking-widest text-slate-800">3-Hour Exclusive Locking</h5>
+                            <p className="text-[10px] text-slate-400 font-medium leading-tight">Private space reserved entirely for your guests.</p>
+                        </div>
+                    </div>
+                    <div className="bg-white p-6 rounded-[2rem] shadow-apple border border-gray-100 flex items-center gap-4">
+                        <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0"><Icon name="music" /></div>
+                        <div>
+                            <h5 className="text-xs font-black uppercase tracking-widest text-slate-800">In-House Music System</h5>
+                            <p className="text-[10px] text-slate-400 font-medium leading-tight">Complimentary high-quality sound for your event.</p>
+                        </div>
+                    </div>
+                    <div className="bg-white p-6 rounded-[2rem] shadow-apple border border-gray-100 flex items-center gap-4">
+                        <div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center shrink-0"><Icon name="gift" /></div>
+                        <div>
+                            <h5 className="text-xs font-black uppercase tracking-widest text-slate-800">Decoration Service</h5>
+                            <p className="text-[10px] text-slate-400 font-medium leading-tight">Professional decor available on request (Chargeable).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="space-y-12">
+                    {partyPackages.map(pkg => (
+                        <div key={pkg.id} className={`p-8 rounded-[3rem] border transition-all shadow-apple ${pkg.featured ? 'border-rose-600 bg-white ring-4 ring-rose-50' : 'border-gray-100 bg-white'}`}>
+                            <div className="flex justify-between items-start mb-6">
+                                <div>
+                                    {pkg.featured && <span className="bg-rose-600 text-white text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-widest mb-2 inline-block shadow-lg">Most Popular</span>}
+                                    <h3 className="text-3xl font-black text-gray-900 leading-none tracking-tighter">{pkg.name}</h3>
+                                    <p className="text-sm font-bold text-rose-600 mt-1">{pkg.config}</p>
+                                </div>
+                                <div className="text-right shrink-0">
+                                    <p className="text-3xl font-black text-gray-900 tracking-tighter leading-none">₹{pkg.price}</p>
+                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Per Person</p>
+                                </div>
+                            </div>
+                            
+                            <div className="space-y-6 mb-8 text-xs font-medium text-slate-700">
+                                <div className="flex gap-4">
+                                    <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center shrink-0"><Icon name="zap" className="w-4 h-4 text-rose-500" /></div>
+                                    <div>
+                                        <p className="text-[9px] font-black uppercase text-gray-400 mb-1 tracking-widest">Drinks Choice</p>
+                                        <p className="leading-snug">{pkg.drinksDetails}</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-4">
+                                    <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center shrink-0"><Icon name="star" className="w-4 h-4 text-amber-500" /></div>
+                                    <div>
+                                        <p className="text-[9px] font-black uppercase text-gray-400 mb-1 tracking-widest">Starter Selections</p>
+                                        <p className="leading-snug">{pkg.starterDetails}</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-4">
+                                    <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center shrink-0"><Icon name="chef-hat" className="w-4 h-4 text-emerald-500" /></div>
+                                    <div>
+                                        <p className="text-[9px] font-black uppercase text-gray-400 mb-1 tracking-widest">Main Course</p>
+                                        <p className="leading-snug">{pkg.mainDetails}</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-4">
+                                    <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center shrink-0"><Icon name="utensils" className="w-4 h-4 text-indigo-500" /></div>
+                                    <div>
+                                        <p className="text-[9px] font-black uppercase text-gray-400 mb-1 tracking-widest">Breads</p>
+                                        <p className="leading-snug">{pkg.breadDetails}</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-4">
+                                    <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0"><Icon name="shield-check" className="w-4 h-4 text-emerald-600" /></div>
+                                    <div>
+                                        <p className="text-[9px] font-black uppercase text-emerald-600 mb-1 tracking-widest">Complimentary Dishes</p>
+                                        <p className="leading-snug text-slate-500 italic">Includes Green Salad, Raita, Rice, and Sweet Dish.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={() => window.open(`https://wa.me/918860950400?text=Hi, I want to book the ${pkg.name} Party Package for 30+ people.`)}
+                                className="w-full bg-rose-600 text-white py-5 rounded-[2rem] font-black shadow-xl shadow-rose-200 transition-all active:scale-95"
+                            >
+                                Book This Plan
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+
+        const CartView = ({ cart, userData, setUserData, removeFromCart, addToCart, setView, handleWhatsApp }) => (
+            <div className="animate-apple p-6 pb-40">
+                <div className="bg-white rounded-[3rem] p-8 shadow-apple border border-gray-50">
+                    <h2 className="text-2xl font-black tracking-tight mb-8">Finish Order</h2>
+                    
+                    <div className="space-y-4 mb-10">
+                        <div className="space-y-1">
+                            <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-4">Full Name</p>
+                            <input 
+                                type="text" 
+                                className="w-full bg-gray-50 rounded-2xl py-4 px-6 text-sm font-bold outline-none border border-transparent focus:border-rose-100 focus:bg-white transition-all"
+                                placeholder="Enter your name"
+                                value={userData.name}
+                                onChange={(e) => setUserData({...userData, name: e.target.value})}
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-4">Mobile Number</p>
+                            <input 
+                                type="tel" 
+                                className="w-full bg-gray-50 rounded-2xl py-4 px-6 text-sm font-bold outline-none border border-transparent focus:border-rose-100 focus:bg-white transition-all"
+                                placeholder="Phone number"
+                                value={userData.mobile}
+                                onChange={(e) => setUserData({...userData, mobile: e.target.value})}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-6">
+                        {cart.length === 0 ? (
+                            <div className="text-center py-10">
+                                <p className="text-gray-400 font-bold mb-4">Your cart is empty.</p>
+                                <button onClick={() => setView('menu')} className="text-rose-600 font-black text-xs uppercase tracking-widest underline">Browse Menu</button>
+                            </div>
+                        ) : (
+                            <>
+                                {cart.map(item => (
+                                    <div key={item.cartId} className="flex justify-between items-center border-b border-gray-50 pb-4">
+                                        <div className="flex-1">
+                                            <h4 className="font-bold text-sm text-gray-900">{item.name}</h4>
+                                            <p className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">{item.portion} • ₹{item.price}</p>
+                                        </div>
+                                        <div className="flex items-center bg-gray-50 rounded-xl px-2 py-1">
+                                            <button onClick={() => removeFromCart(item.cartId)} className="p-2 text-gray-500 hover:text-rose-600 transition-colors"><Icon name="minus" className="w-3 h-3" /></button>
+                                            <span className="px-3 text-xs font-bold text-gray-900">{item.qty}</span>
+                                            <button onClick={() => addToCart(item, item.portion, item.price)} className="p-2 text-rose-600 hover:text-rose-700 transition-colors"><Icon name="plus" className="w-3 h-3" /></button>
+                                        </div>
+                                    </div>
+                                ))}
+                                <div className="pt-6 mt-6">
+                                    <div className="flex justify-between items-center text-2xl font-black">
+                                        <span className="tracking-tight text-gray-900">Total</span>
+                                        <span className="tracking-tighter text-gray-900">₹{cart.reduce((a,b)=>a+(b.price*b.qty), 0)}</span>
+                                    </div>
+                                </div>
+                                <button 
+                                    onClick={handleWhatsApp}
+                                    className="w-full bg-[#25D366] text-white py-5 rounded-[2rem] font-black shadow-xl flex items-center justify-center gap-3 mt-4 active:scale-95 transition-all"
+                                >
+                                    <Icon name="message-circle" className="w-6 h-6" /> Send to WhatsApp
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+
+        // --- Main App ---
+        const App = () => {
+            const [view, setView] = useState('home');
+            const [activeCategory, setActiveCategory] = useState('All');
+            const [activeSubCategory, setActiveSubCategory] = useState('All');
+            const [cart, setCart] = useState([]);
+            const [searchQuery, setSearchQuery] = useState('');
+            const [isCatOpen, setIsCatOpen] = useState(false);
+            const [userData, setUserData] = useState({ name: '', mobile: '' });
+
+            // Data sourced from the provided CSV file
+            const menuItems = useMemo(() => [
+/******************************
+        RECOMMENDED
+******************************/
+
+{ id: 1001, name: "SGF Special Platter", category: "Recommended", subCategory: "Chef Specials", price: 495 },
+{ id: 1002, name: "SGF Special Chaap", category: "Recommended", subCategory: "Signature Tandoor", price: 295 },
+{ id: 1003, name: "Afghani Chaap", category: "Recommended", subCategory: "Signature Tandoor", price: 275 },
+{ id: 1006, name: "Tawa Chaap Masala", category: "Recommended", subCategory: "Best Seller Gravies", prices: { "300ml": 175, "500ml": 255, "750ml": 335 } },
+{ id: 1007, name: "Dal Makhani", category: "Recommended", subCategory: "Family Favourite", prices: { "300ml": 195, "500ml": 275, "750ml": 355 } },
+{ id: 1008, name: "Chilli Paneer Dry", category: "Recommended", subCategory: "Chinese Best Seller", price: 275 },
+{ id: 1009, name: "Honey Chilli Potato", category: "Recommended", subCategory: "Chinese Best Seller", price: 255 },
+{ id: 1010, name: "SGF Special Noodle/Fried Rice", category: "Recommended", subCategory: "Chinese Signature", price: 225 },
+{ id: 1012, name: "SGF Special Thali", category: "Recommended", subCategory: "Complete Meal", price: 295 },
+
+
+/* ================= BREADS ================= */
+
+{ id: 1, name: "Tandoori Roti", category: "North Indian", subCategory: "Breads", price: 15 },
+{ id: 2, name: "Rumali", category: "North Indian", subCategory: "Breads", price: 15 },
+{ id: 3, name: "Butter Roti", category: "North Indian", subCategory: "Breads", price: 20 },
+{ id: 4, name: "Plain Naan", category: "North Indian", subCategory: "Breads", price: 35 },
+{ id: 5, name: "Butter Naan", category: "North Indian", subCategory: "Breads", price: 55 },
+{ id: 6, name: "Lacha Paratha", category: "North Indian", subCategory: "Breads", price: 55 },
+{ id: 7, name: "Garlic Naan", category: "North Indian", subCategory: "Breads", price: 75 },
+{ id: 8, name: "Pudhina Paratha", category: "North Indian", subCategory: "Breads", price: 55 },
+{ id: 9, name: "Red/Green Chilli Paratha", category: "North Indian", subCategory: "Breads", price: 55 },
+{ id: 10, name: "Stuff Paratha/Naan", category: "North Indian", subCategory: "Breads", price: 65 },
+{ id: 11, name: "Paneer Paratha/Naan", category: "North Indian", subCategory: "Breads", price: 85 },
+{ id: 12, name: "Keema Soya Naan", category: "North Indian", subCategory: "Breads", price: 75 },
+
+/* ================= BURGER ================= */
+
+{ id: 13, name: "Aloo Patty Burger", category: "Continental", subCategory: "Burger", price: 75 },
+{ id: 14, name: "Veg Patty Burger", category: "Continental", subCategory: "Burger", price: 95 },
+{ id: 15, name: "Crispy Paneer Burger", category: "Continental", subCategory: "Burger", price: 125 },
+
+/* ================= CHINESE APPETIZERS ================= */
+
+{ id: 16, name: "Spring Rolls", category: "Chinese", subCategory: "Chinese Appetizers", price: 205 },
+{ id: 17, name: "Crispy Spring Rolls", category: "Chinese", subCategory: "Chinese Appetizers", price: 235 },
+{ id: 18, name: "Manchurian Dry", category: "Chinese", subCategory: "Chinese Appetizers", price: 225 },
+{ id: 19, name: "Manchurian Gravy", category: "Chinese", subCategory: "Chinese Appetizers", price: 235 },
+{ id: 20, name: "Chilli Potato", category: "Chinese", subCategory: "Chinese Appetizers", price: 245 },
+{ id: 21, name: "Honey Chilli Potato", category: "Chinese", subCategory: "Chinese Appetizers", price: 255 },
+{ id: 22, name: "Chilli Paneer Dry", category: "Chinese", subCategory: "Chinese Appetizers", price: 275 },
+{ id: 23, name: "Chilli Paneer Gravy", category: "Chinese", subCategory: "Chinese Appetizers", price: 285 },
+{ id: 24, name: "Crispy Corns", category: "Chinese", subCategory: "Chinese Appetizers", price: 255 },
+{ id: 25, name: "Chilli Chaap", category: "Chinese", subCategory: "Chinese Appetizers", price: 275 },
+{ id: 26, name: "Chilli Mushroom", category: "Chinese", subCategory: "Chinese Appetizers", price: 275 },
+
+/* ================= CHINESE COMBOS ================= */
+
+{ id: 27, name: "Veg Noodle/Fried Rice + Manchurian", category: "Chinese", subCategory: "Chinese Combos", price: 225 },
+{ id: 28, name: "Veg Noodle/Fried Rice + Chilli Paneer", category: "Chinese", subCategory: "Chinese Combos", price: 225 },
+{ id: 29, name: "Veg Noodle/Fried Rice + Chilli Chaap", category: "Chinese", subCategory: "Chinese Combos", price: 225 },
+
+/* ================= DAL ================= */
+
+{ id: 35, name: "Dal Tadka", category: "North Indian", subCategory: "Dal Delicacies", prices: { "300ml": 155, "500ml": 235, "750ml": 315 } },
+{ id: 36, name: "Dal Makhani", category: "North Indian", subCategory: "Dal Delicacies", prices: { "300ml": 195, "500ml": 275, "750ml": 355 } },
+
+/* ================= FRIES ================= */
+
+{ id: 37, name: "Classic Fries", category: "Continental", subCategory: "Fries", price: 145 },
+{ id: 38, name: "Peri-Peri Fries", category: "Continental", subCategory: "Fries", price: 175 },
+{ id: 39, name: "Cheese Fries", category: "Continental", subCategory: "Fries", price: 205 },
+
+/* ================= INDIAN COMBOS ================= */
+
+{ id: 40, name: "Rajma + 2 Roti/1 Naan + Salad + Raita", category: "North Indian", subCategory: "Indian Combos", price: 205 },
+{ id: 41, name: "Chole + 2 Roti/1 Naan + Salad + Raita", category: "North Indian", subCategory: "Indian Combos", price: 205 },
+{ id: 42, name: "Dal Makhni + 2 Roti/1 Naan + Salad + Raita", category: "North Indian", subCategory: "Indian Combos", price: 225 },
+{ id: 43, name: "Shahi Paneer + 2 Roti/1 Naan + Salad + Raita", category: "North Indian", subCategory: "Indian Combos", price: 225 },
+{ id: 44, name: "Tawa Chaap + 2 Roti/1 Naan + Salad + Raita", category: "North Indian", subCategory: "Indian Combos", price: 225 },
+{ id: 45, name: "Kathi Kebab + 2 Rumali + Raita + Salad", category: "North Indian", subCategory: "Indian Combos", price: 225 },
+
+/* ================= INDIAN GRAVIES ================= */
+
+{ id: 46, name: "Rajma Masala", category: "North Indian", subCategory: "Indian Gravies", prices: { "300ml": 165, "500ml": 245, "750ml": 325 } },
+{ id: 47, name: "Chana Masala", category: "North Indian", subCategory: "Indian Gravies", prices: { "300ml": 165, "500ml": 245, "750ml": 325 } },
+{ id: 48, name: "Butter Chaap", category: "North Indian", subCategory: "Indian Gravies", prices: { "300ml": 175, "500ml": 255, "750ml": 335 } },
+{ id: 49, name: "Kadhai Chaap", category: "North Indian", subCategory: "Indian Gravies", prices: { "300ml": 175, "500ml": 255, "750ml": 335 } },
+{ id: 50, name: "Shahi Paneer", category: "North Indian", subCategory: "Indian Gravies", prices: { "300ml": 175, "500ml": 255, "750ml": 335 } },
+
+/* ================= MOMOS ================= */
+
+{ id: 51, name: "Steam Momos", category: "Chinese", subCategory: "Momos", prices: { veg: 115, paneer: 135 } },
+{ id: 52, name: "Fried Momos", category: "Chinese", subCategory: "Momos", prices: { veg: 135, paneer: 155 } },
+{ id: 53, name: "Tandoori Momos", category: "Chinese", subCategory: "Momos", prices: { veg: 165, paneer: 205 } },
+{ id: 54, name: "Tandoori Afghani Momos", category: "Chinese", subCategory: "Momos", prices: { veg: 165, paneer: 205 } },
+{ id: 55, name: "Garlic Tandoori Momos", category: "Chinese", subCategory: "Momos", prices: { veg: 165, paneer: 205 } },
+{ id: 56, name: "Chilli Gravy Momos", category: "Chinese", subCategory: "Momos", prices: { veg: 165, paneer: 205 } },
+{ id: 57, name: "Kurkure Momos", category: "Chinese", subCategory: "Momos", prices: { veg: 165, paneer: 205 } },
+
+/* ================= PASTA ================= */
+
+{ id: 58, name: "White Sauce Pasta", category: "Continental", subCategory: "Pasta", price: 225 },
+{ id: 59, name: "Red Sauce Pasta", category: "Continental", subCategory: "Pasta", price: 225 },
+{ id: 60, name: "Mix Sauce Pasta", category: "Continental", subCategory: "Pasta", price: 235 },
+
+/* ================= RICE ================= */
+
+{ id: 61, name: "Steam Rice", category: "North Indian", subCategory: "Rice", price: 95 },
+{ id: 62, name: "Jeera Rice", category: "North Indian", subCategory: "Rice", price: 125 },
+{ id: 63, name: "Veg Biryani", category: "North Indian", subCategory: "Rice", price: 205 },
+
+/* ================= RICE BOX ================= */
+
+{ id: 64, name: "Rajma Rice Box", category: "North Indian", subCategory: "Rice Box", price: 145 },
+{ id: 65, name: "Chole Rice Box", category: "North Indian", subCategory: "Rice Box", price: 145 },
+{ id: 66, name: "Dal Makhni Rice Box", category: "North Indian", subCategory: "Rice Box", price: 155 },
+{ id: 67, name: "Shahi Paneer Rice Box", category: "North Indian", subCategory: "Rice Box", price: 165 },
+{ id: 68, name: "Tawa Chaap Rice Box", category: "North Indian", subCategory: "Rice Box", price: 165 },
+
+/* ================= ROLLS ================= */
+
+{ id: 69, name: "Kebab Roll", category: "Tandoori", subCategory: "Rolls", price: 145 },
+{ id: 70, name: "Malai Chaap Roll", category: "Tandoori", subCategory: "Rolls", price: 155 },
+{ id: 71, name: "Chatpata Chaap Roll", category: "Tandoori", subCategory: "Rolls", price: 155 },
+{ id: 72, name: "Achari Chaap Roll", category: "Tandoori", subCategory: "Rolls", price: 155 },
+{ id: 73, name: "Afghani Chaap Roll", category: "Tandoori", subCategory: "Rolls", price: 165 },
+{ id: 74, name: "Peri Peri Chaap Tikka Roll", category: "Tandoori", subCategory: "Rolls", price: 165 },
+{ id: 75, name: "Stuff Chaap Roll", category: "Tandoori", subCategory: "Rolls", price: 165 },
+{ id: 76, name: "Mushroom Roll", category: "Tandoori", subCategory: "Rolls", price: 155 },
+{ id: 77, name: "Paneer Tikka Roll", category: "Tandoori", subCategory: "Rolls", price: 165 },
+{ id: 78, name: "Peri-Peri Paneer Tikka Roll", category: "Tandoori", subCategory: "Rolls", price: 175 },
+{ id: 79, name: "SGF Special Roll", category: "Tandoori", subCategory: "Rolls", price: 175 },
+{ id: 80, name: "Diet Chaap Roll", category: "Tandoori", subCategory: "Rolls", price: 155 },
+
+/* ================= SANDWICH ================= */
+
+{ id: 87, name: "Veggie Grilled Sandwich", category: "Continental", subCategory: "Sandwich", price: 125 },
+{ id: 88, name: "Mozzarella Sandwich", category: "Continental", subCategory: "Sandwich", price: 155 },
+{ id: 89, name: "Paneer Sandwich", category: "Continental", subCategory: "Sandwich", price: 165 },
+
+/* ================= SOUPS ================= */
+
+{ id: 90, name: "Manchow Soup", category: "Chinese", subCategory: "Soups", price: 125 },
+{ id: 91, name: "Hot & Sour Soup", category: "Chinese", subCategory: "Soups", price: 125 },
+{ id: 92, name: "Sweet Corn Soup", category: "Chinese", subCategory: "Soups", price: 115 },
+{ id: 93, name: "Tomato Soup", category: "Chinese", subCategory: "Soups", price: 105 },
+{ id: 94, name: "Veg Soup", category: "Chinese", subCategory: "Soups", price: 105 },
+
+/* ================= STARTERS ================= */
+
+{ id: 95, name: "Dahi Kebab", category: "North Indian", subCategory: "Starters", price: 245 },
+{ id: 96, name: "Veg Wings", category: "North Indian", subCategory: "Starters", price: 255 },
+{ id: 97, name: "Veg Lollipop", category: "North Indian", subCategory: "Starters", price: 255 },
+{ id: 98, name: "Golden Crispy Chaap", category: "North Indian", subCategory: "Starters", price: 275 },
+{ id: 99, name: "Golden Crispy Paneer", category: "North Indian", subCategory: "Starters", price: 285 },
+{ id: 100, name: "Golden Crispy Mushroom", category: "North Indian", subCategory: "Starters", price: 275 },
+{ id: 101, name: "Veg Soya Tangdi", category: "North Indian", subCategory: "Starters", price: 265 },
+
+/* ================= TANDOOR ================= */
+
+{ id: 102, name: "Malai Chaap", category: "Tandoori", subCategory: "Tandoori Tikke", price: 265 },
+{ id: 103, name: "Achari Chaap", category: "Tandoori", subCategory: "Tandoori Tikke", price: 265 },
+{ id: 104, name: "Chatpati Chaap", category: "Tandoori", subCategory: "Tandoori Tikke", price: 265 },
+{ id: 105, name: "Afghani Chaap", category: "Tandoori", subCategory: "Tandoori Tikke", price: 275 },
+{ id: 106, name: "Stuff Chaap", category: "Tandoori", subCategory: "Tandoori Tikke", price: 275 },
+{ id: 107, name: "Pudina Chaap", category: "Tandoori", subCategory: "Tandoori Tikke", price: 265 },
+{ id: 108, name: "Diet Chaap", category: "Tandoori", subCategory: "Tandoori Tikke", price: 255 },
+{ id: 109, name: "Sufi Chaap", category: "Tandoori", subCategory: "Tandoori Tikke", price: 275 },
+{ id: 110, name: "Masala Chaap", category: "Tandoori", subCategory: "Tandoori Tikke", price: 265 },
+{ id: 111, name: "Peri-Peri Soya Tikka", category: "Tandoori", subCategory: "Tandoori Tikke", price: 275 },
+{ id: 112, name: "Garlic Soya Tikka", category: "Tandoori", subCategory: "Tandoori Tikke", price: 275 },
+{ id: 113, name: "Paneer Tikka", category: "Tandoori", subCategory: "Tandoori Tikke", price: 285 },
+{ id: 114, name: "Peri-Peri Paneer Tikka", category: "Tandoori", subCategory: "Tandoori Tikke", price: 295 },
+{ id: 115, name: "Garlic Paneer Tikka", category: "Tandoori", subCategory: "Tandoori Tikke", price: 295 },
+{ id: 116, name: "Mushroom Tikka", category: "Tandoori", subCategory: "Tandoori Tikke", price: 275 },
+{ id: 117, name: "SGF Special Chaap", category: "Tandoori", subCategory: "Tandoori Tikke", price: 295 },
+{ id: 118, name: "Veg Seekh Kabab", category: "Tandoori", subCategory: "Tandoori Tikke", price: 255 },
+{ id: 119, name: "SGF Special Platter", category: "Tandoori", subCategory: "Tandoori Tikke", price: 495 },
+{ id: 120, name: "SGF Special Kathi Kebab", category: "Tandoori", subCategory: "Tandoori Tikke", price: 295 },
+
+/* ================= TAWA SPECIAL ================= */
+
+{ id: 121, name: "Tawa Korma", category: "Tandoori", subCategory: "Tawa Special", prices: { "300ml": 175, "500ml": 255, "750ml": 335 } },
+{ id: 122, name: "Tawa Chaap Masala", category: "Tandoori", subCategory: "Tawa Special", prices: { "300ml": 175, "500ml": 255, "750ml": 335 } },
+{ id: 123, name: "Tawa Tikka Masala", category: "Tandoori", subCategory: "Tawa Special", prices: { "300ml": 185, "500ml": 265, "750ml": 345 } },
+{ id: 124, name: "Tawa Paneer Masala", category: "Tandoori", subCategory: "Tawa Special", prices: { "300ml": 185, "500ml": 265, "750ml": 345 } },
+{ id: 125, name: "Tawa Paneer Tikka Masala", category: "Tandoori", subCategory: "Tawa Special", prices: { "300ml": 195, "500ml": 275, "750ml": 355 } },
+{ id: 126, name: "Tawa Mushroom Masala", category: "Tandoori", subCategory: "Tawa Special", prices: { "300ml": 185, "500ml": 265, "750ml": 345 } },
+
+/* ================= PANEER & VEG GRAVIES ================= */
+
+{ id: 127, name: "Mutter Paneer", category: "North Indian", subCategory: "Indian Gravies", prices: { "300ml": 175, "500ml": 255, "750ml": 335 } },
+{ id: 128, name: "Mix Veg", category: "North Indian", subCategory: "Indian Gravies", prices: { "300ml": 165, "500ml": 245, "750ml": 325 } },
+{ id: 129, name: "Mutter Mushroom", category: "North Indian", subCategory: "Indian Gravies", prices: { "300ml": 175, "500ml": 255, "750ml": 335 } },
+{ id: 130, name: "Keema Chaap", category: "North Indian", subCategory: "Indian Gravies", prices: { "300ml": 185, "500ml": 265, "750ml": 345 } },
+{ id: 131, name: "Kadhai Paneer", category: "North Indian", subCategory: "Indian Gravies", prices: { "300ml": 185, "500ml": 265, "750ml": 345 } },
+{ id: 132, name: "Kadhai Mushroom", category: "North Indian", subCategory: "Indian Gravies", prices: { "300ml": 185, "500ml": 265, "750ml": 345 } },
+{ id: 133, name: "Paneer Butter Masala", category: "North Indian", subCategory: "Indian Gravies", prices: { "300ml": 195, "500ml": 275, "750ml": 355 } },
+{ id: 134, name: "Paneer Lababdar", category: "North Indian", subCategory: "Indian Gravies", prices: { "300ml": 195, "500ml": 275, "750ml": 355 } },
+
+/* ================= THALI ================= */
+
+{ id: 135, name: "SGF Eco Thali", category: "North Indian", subCategory: "Thali", price: 155 },
+{ id: 136, name: "SGF Deluxe Thali", category: "North Indian", subCategory: "Thali", price: 225 },
+{ id: 137, name: "SGF Special Thali", category: "North Indian", subCategory: "Thali", price: 295 },
+
+/* ================= PLANT BASED ================= */
+
+{ id: 138, name: "Veggie Chick-Less Drumsticks", category: "Tandoori", subCategory: "Plant Based Meat", price: 255 },
+{ id: 139, name: "Veggie Fish Nuggets", category: "Tandoori", subCategory: "Plant Based Meat", price: 265 },
+{ id: 140, name: "Veggie Fish Fingers", category: "Tandoori", subCategory: "Plant Based Meat", price: 275 },
+{ id: 141, name: "Meatless Seekh Kebab", category: "Tandoori", subCategory: "Plant Based Meat", price: 255 },
+
+/* ================= NOODLES & RICE ================= */
+
+{ id: 142, name: "Veg Noodle/Fried Rice", category: "Chinese", subCategory: "Noodles & Rice", price: 195 },
+{ id: 143, name: "Chilli Garlic Noodle/Fried Rice", category: "Chinese", subCategory: "Noodles & Rice", price: 205 },
+{ id: 144, name: "Singapoori Noodle/Fried Rice", category: "Chinese", subCategory: "Noodles & Rice", price: 215 },
+{ id: 145, name: "Hakka Noodle/Fried Rice", category: "Chinese", subCategory: "Noodles & Rice", price: 205 },
+{ id: 146, name: "Schezwan Noodle/Fried Rice", category: "Chinese", subCategory: "Noodles & Rice", price: 215 },
+{ id: 147, name: "SGF Special Noodle/Fried Rice", category: "Chinese", subCategory: "Noodles & Rice", price: 225 },
+
+/* ================= Coolers ================= */
+
+{ id: 148, name: "Ice Tea", category: "Beverages", subCategory: "Coolers", price: 95 },
+{ id: 149, name: "Peach Mojito", category: "Beverages", subCategory: "Coolers", price: 105 },
+{ id: 150, name: "Green Apple Mojito", category: "Beverages", subCategory: "Coolers", price: 105 },
+{ id: 151, name: "Kala Khatta Mojito", category: "Beverages", subCategory: "Coolers", price: 105 },
+{ id: 152, name: "Lemon Banta", category: "Beverages", subCategory: "Coolers", price: 85 },
+
+/* ================= SHAKES ================= */
+
+{ id: 81, name: "Vanilla Shake", category: "Beverages", subCategory: "Shakes", price: 145 },
+{ id: 82, name: "Strawberry Shake", category: "Beverages", subCategory: "Shakes", price: 145 },
+{ id: 83, name: "Butterscotch Shake", category: "Beverages", subCategory: "Shakes", price: 155 },
+{ id: 84, name: "Chocolate Shake", category: "Beverages", subCategory: "Shakes", price: 165 },
+{ id: 85, name: "Oreo Shake", category: "Beverages", subCategory: "Shakes", price: 175 },
+{ id: 86, name: "Kitkat Shake", category: "Beverages", subCategory: "Shakes", price: 185 },
+
+/* ================= COFFEE ================= */
+
+{ id: 30, name: "Hot Coffee", category: "Beverages", subCategory: "Coffee", price: 105 },
+{ id: 31, name: "Hazelnut Hot Coffee", category: "Beverages", subCategory: "Coffee", price: 125 },
+{ id: 32, name: "Black Coffee", category: "Beverages", subCategory: "Coffee", price: 105 },
+{ id: 33, name: "Classic Cold Coffee", category: "Beverages", subCategory: "Coffee", price: 135 },
+{ id: 34, name: "Hazelnut Cold Coffee", category: "Beverages", subCategory: "Coffee", price: 145 },
+
+/* ================= RAITA ================= */
+
+{ id: 153, name: "Plain Raita", category: "North Indian", subCategory: "Raita", price: 75 },
+{ id: 154, name: "Bundi Raita", category: "North Indian", subCategory: "Raita", price: 85 },
+{ id: 155, name: "Mix Raita", category: "North Indian", subCategory: "Raita", price: 95 }
+
+], []);
+
+            const partyPackages = [
+                {
+                    id: 'p1', name: 'Deluxe', price: 549, config: '(3+3+2)',
+                    drinksDetails: '1 Choice: Fresh Lime / Cold Drink / Virgin Mojito',
+                    starterDetails: '3 Choices: Chilly Potato, Noodles, Manchurian, French Fries, Malai Chaap, Masala Chaap, Afghani Chaap',
+                    mainDetails: '3 Dishes: Dal Makhni, Shahi Paneer, Mix Veg',
+                    breadDetails: '2 Choices: Tandoori Roti, Butter Naan'
+                },
+                {
+                    id: 'p2', name: 'Special', price: 699, config: '(4+4+3)', featured: true,
+                    drinksDetails: 'Unlimited: Fresh Lime & Virgin Mojito',
+                    starterDetails: '4 Choices: Dahi Kabab, Paneer Tikka, Crispy Soya Chaap, Spring Rolls, Chilli Potato, Manchurian',
+                    mainDetails: '4 Dishes: Dal Makhni, Shahi Paneer, Mix Veg, Tawa Chaap Masala',
+                    breadDetails: '3 Choices: Tandoori Roti, Lacha Paratha, Butter Naan'
+                },
+                {
+                    id: 'p3', name: 'Premium', price: 799, config: '(6+4+4)',
+                    drinksDetails: 'Unlimited: Fresh Lime, Virgin Mojito & Cold Drinks',
+                    starterDetails: '6 Choices: Spring Roll, Manchurian, Afghani Chaap, Paneer Tikka, Dahi Kebab, Crispy Soya Chaap, Veg Burger, Pasta, Nachos',
+                    mainDetails: '4 Dishes: Dal Makhni, Shahi Paneer, Mix Veg, Tawa Chaap Masala',
+                    breadDetails: '4 Choices: Tandoori Roti, Lachha Paratha, Butter Naan, Missi Roti'
+                }
+            ];
+
+            const categories = useMemo(() => ["All", ...new Set(menuItems.map(item => item.category))], [menuItems]);
+            const subCategories = useMemo(() => {
+                const subSet = new Set(
+                    menuItems
+                        .filter(item => item.category === activeCategory)
+                        .map(item => item.subCategory)
+                );
+                return [...subSet];
+            }, [activeCategory, menuItems]);
+
+            const filteredMenu = useMemo(() => {
+                return menuItems.filter(item => {
+                    const matchesCat = activeCategory === 'All' || item.category === activeCategory;
+                    const matchesSub = activeSubCategory === 'All' || item.subCategory === activeSubCategory;
+                    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
+                    return matchesCat && matchesSub && matchesSearch;
+                });
+            }, [activeCategory, activeSubCategory, searchQuery, menuItems]);
+
+            const addToCart = useCallback((item, portion, price) => {
+                const cartId = `${item.id}-${portion}`;
+                setCart(prev => {
+                    const existing = prev.find(i => i.cartId === cartId);
+                    if (existing) return prev.map(i => i.cartId === cartId ? { ...i, qty: i.qty + 1 } : i);
+                    return [...prev, { ...item, cartId, portion, price, qty: 1 }];
+                });
+            }, []);
+
+            const removeFromCart = useCallback((cartId) => {
+                setCart(prev => prev.map(i => i.cartId === cartId ? { ...i, qty: i.qty - 1 } : i).filter(i => i.qty > 0));
+            }, []);
+
+            const getItemQty = (id, portion) => {
+                const item = cart.find(i => i.id === id && i.portion === portion);
+                return item ? item.qty : 0;
+            };
+
+            const handleWhatsApp = () => {
+                if (!userData.name || !userData.mobile) return alert("Please enter your details first");
+                const orderText = cart.map(i => `${i.qty}x ${i.name} (${i.portion})`).join('%0A');
+                const finalStr = `New Order from ${userData.name} (${userData.mobile})%0A%0AItems:%0A${orderText}%0A%0ATotal: ₹${cart.reduce((a,b)=>a+(b.price*b.qty), 0)}`;
+                window.open(`https://wa.me/918860950400?text=${finalStr}`);
+            };
+
+            return (
+                <div className="min-h-screen max-w-2xl mx-auto shadow-2xl bg-[#f5f5f7] relative">
+                    <div className="apple-glass sticky top-0 z-[100] border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => setView('home')}>
+                            <div className="bg-rose-600 p-1.5 rounded-xl shadow-lg shadow-rose-200">
+                                <Icon name="flame" className="w-5 h-5 text-white" />
+                            </div>
+                            <h1 className="font-extrabold text-xl tracking-tight">SGF</h1>
+                        </div>
+                        <div className="flex gap-6 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                            <button onClick={() => setView('home')} className={view === 'home' ? 'tab-active text-rose-600' : 'hover:text-gray-600 transition-colors'}>Home</button>
+                            <button onClick={() => setView('menu')} className={view === 'menu' ? 'tab-active text-rose-600' : 'hover:text-gray-600 transition-colors'}>Menu</button>
+                            <button onClick={() => setView('party')} className={view === 'party' ? 'tab-active text-rose-600' : 'hover:text-gray-600 transition-colors'}>Parties</button>
+                        </div>
+                    </div>
+                    
+                    <div className="min-h-[calc(100vh-160px)]">
+                        {view === 'home' && <HomeView setView={setView} />}
+                        {view === 'menu' && (
+                            <MenuView 
+                                filteredMenu={filteredMenu}
+                                searchQuery={searchQuery}
+                                setSearchQuery={setSearchQuery}
+                                isCatOpen={isCatOpen}
+                                setIsCatOpen={setIsCatOpen}
+                                activeCategory={activeCategory}
+                                setActiveCategory={setActiveCategory}
+                                activeSubCategory={activeSubCategory}
+                                setActiveSubCategory={setActiveSubCategory}
+                                categories={categories}
+                                subCategories={subCategories}
+                                getItemQty={getItemQty}
+                                removeFromCart={removeFromCart}
+                                addToCart={addToCart}
+                            />
+                        )}
+                        {view === 'party' && <PartyPackagesView partyPackages={partyPackages} />}
+                        {view === 'cart' && (
+                            <CartView 
+                                cart={cart}
+                                userData={userData}
+                                setUserData={setUserData}
+                                removeFromCart={removeFromCart}
+                                addToCart={addToCart}
+                                setView={setView}
+                                handleWhatsApp={handleWhatsApp}
+                            />
+                        )}
+                    </div>
+
+                    {cart.length > 0 && view !== 'cart' && (
+                        <div className="fixed bottom-0 left-0 right-0 p-6 z-[200] animate-apple max-w-2xl mx-auto">
+                            <button 
+                                onClick={() => setView('cart')}
+                                className="w-full bg-rose-600 text-white p-5 rounded-[2rem] flex items-center justify-between shadow-2xl shadow-rose-200 border-2 border-white/20 active:scale-95 transition-all"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-white/20 px-3 py-1 rounded-full font-black text-xs">{cart.reduce((a,b)=>a+b.qty, 0)} Items</div>
+                                    <span className="font-bold text-xs uppercase tracking-widest">View Bag</span>
+                                </div>
+                                <span className="font-black text-xl tracking-tighter">₹{cart.reduce((a,b)=>a+(b.price*b.qty), 0)}</span>
+                            </button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<App />);
+    </script>
+</body>
+</html>
