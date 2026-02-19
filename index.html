@@ -35,14 +35,6 @@
             background-image: radial-gradient(at 0% 0%, rgba(34, 197, 94, 0.15) 0, transparent 50%),
                               radial-gradient(at 100% 100%, rgba(34, 197, 94, 0.1) 0, transparent 50%);
         }
-        .portfolio-scroll::-webkit-scrollbar {
-            display: none;
-        }
-        .portfolio-scroll {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        /* Custom animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -50,15 +42,19 @@
         .animate-fade-in {
             animation: fadeIn 0.6s ease-out forwards;
         }
+        .tab-active {
+            background: #22c55e;
+            color: black;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+        }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState } = React;
 
-        // Custom Inline Icons for maximum reliability
         const Icon = ({ name, size = 24, className = "" }) => {
             const icons = {
                 zap: <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />,
@@ -72,23 +68,11 @@
                 arrowRight: <><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></>,
                 external: <><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></>,
                 menu: <><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></>,
-                x: <><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>,
-                award: <><circle cx="12" cy="8" r="7" /><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" /></>,
-                briefcase: <><rect x="2" y="7" width="20" height="14" rx="2" ry="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></>
+                x: <><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></>
             };
 
             return (
-                <svg 
-                    width={size} 
-                    height={size} 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    className={className}
-                >
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
                     {icons[name]}
                 </svg>
             );
@@ -96,6 +80,7 @@
 
         const App = () => {
             const [isMenuOpen, setIsMenuOpen] = useState(false);
+            const [activeTab, setActiveTab] = useState('Portals');
 
             const services = [
                 { icon: "zap", title: "Workflow Automation", desc: "Say goodbye to repetitive tasks. We build robots for your boring work." },
@@ -107,9 +92,70 @@
             ];
 
             const portfolio = [
-                { title: "Inventory Master", category: "Automation", img: "https://images.unsplash.com/photo-1586769852044-692d6e3703f0?q=80&w=800&auto=format&fit=crop" },
-                { title: "Real Estate CRM", category: "Custom Software", img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=800&auto=format&fit=crop" },
-                { title: "E-comm Tracker", category: "WhatsApp Bot", img: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=800&auto=format&fit=crop" },
+                { 
+                    title: "Custom CRM Portal", 
+                    category: "CRMs", 
+                    img: "https://images.unsplash.com/photo-1622782914767-404fb9ab3f57?auto=format&fit=crop&q=80&w=800",
+                    desc: "Custom internal CRM architecture for enterprise client acquisition and lead tracking for a 1000Cr B2B organization.",
+                    primaryLink: { label: "Live Preview", url: "https://script.google.com/macros/s/AKfycbzxQEqcHGzeQdf54Blr1AHKrvP_Mj_ebjpHSg2AF_fLILtw2Tcija8CjA-KpGKCJ-moMw/exec" }
+                },
+                { 
+                    title: "Interior Design Suite", 
+                    category: "CRMs", 
+                    img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=800",
+                    desc: "Dual-layer system with a public lead gen form and a private project management CRM for an interior design firm.",
+                    primaryLink: { label: "Lead Gen", url: "interior-leadgen.html" },
+                    secondaryLink: { label: "Backend CRM", url: "interiorCRM.html" }
+                },
+                { 
+                    title: "View Portal", 
+                    category: "Portals", 
+                    img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800",
+                    desc: "Real-time, secure data visualization portal for stakeholders with strict access controls.",
+                    primaryLink: { label: "Live Preview", url: "https://script.google.com/macros/s/AKfycbw9ynIVaHRe4EuSmVtDPjTMSpHNWKAygZXcU8q8Vm5FdeFxFOvVcz3s4JSIBLw7MKx6ig/exec" }
+                },
+                { 
+                    title: "CA Doc Tracker", 
+                    category: "Automations", 
+                    img: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800",
+                    desc: "Compliance automation for Chartered Accountants to manage massive document flows.",
+                    primaryLink: { label: "Live Preview", url: "https://script.google.com/macros/s/AKfycbzQvcHEn_PvifrtGNA7Ixmw680gjB-TGa1SFEk8qSDWnGFY43JzcVFNt_Hrs7hA5PLRPw/exec" }
+                },
+                { 
+                    title: "ZipShine Services", 
+                    category: "Web Ordering", 
+                    img: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800",
+                    desc: "End-to-end automation for cleaning services, from scheduling to customer notifications.",
+                    primaryLink: { label: "Project View", url: "zipclean.html" }
+                },
+                { 
+                    title: "Pitch Deck Generator", 
+                    category: "Automations", 
+                    img: "https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?auto=format&fit=crop&q=80&w=800",
+                    desc: "One-click professional proposal generation tool for high-ticket sales teams.",
+                    primaryLink: { label: "Project View", url: "proposalgenerator.html" }
+                },
+                { 
+                    title: "Spice Grill Flame", 
+                    category: "Web Ordering", 
+                    img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800",
+                    desc: "Centralized business management portal for retail and inventory control.",
+                    primaryLink: { label: "Project View", url: "sgfshaktinagar.html" }
+                },
+                { 
+                    title: "Live Data Dashboard", 
+                    category: "Portals", 
+                    img: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&q=80&w=800",
+                    desc: "Dynamic live-sync dashboard for tracking KPIs across multiple business units.",
+                    primaryLink: { label: "Project View", url: "dataTracker.html" }
+                },
+                { 
+                    title: "Q3Gym Management", 
+                    category: "Web Ordering", 
+                    img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800",
+                    desc: "Automated attendance and membership tracking system for fitness hubs.",
+                    primaryLink: { label: "Project View", url: "Q3Gym.html" }
+                }
             ];
 
             const testimonials = [
@@ -117,11 +163,13 @@
                 { name: "Priya Varma", role: "Founder, Bloom Retail", text: "The custom dashboard gives me insights I never had. Truly empowering for small businesses." }
             ];
 
+            const filteredPortfolio = activeTab === 'All' ? portfolio : portfolio.filter(p => p.category === activeTab);
+
             return (
                 <div className="min-h-screen gradient-mesh">
                     {/* Navigation */}
                     <nav className="fixed w-full z-50 glass top-0 transition-all">
-                        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+                        <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex justify-between items-center">
                             <div className="flex items-center gap-2">
                                 <div className="w-8 h-8 bg-neon rounded-lg flex items-center justify-center shadow-[0_0_10px_rgba(34,197,94,0.3)]">
                                     <span className="text-black font-bold">S</span>
@@ -131,7 +179,7 @@
                             
                             <div className="hidden md:flex gap-8 items-center">
                                 <a href="#services" className="text-sm font-medium hover:text-neon transition-colors">Services</a>
-                                <a href="#about" className="text-sm font-medium hover:text-neon transition-colors">About</a>
+                                <a href="#about" className="text-sm font-medium hover:text-neon transition-colors">Founder</a>
                                 <a href="#portfolio" className="text-sm font-medium hover:text-neon transition-colors">Portfolio</a>
                                 <a href="https://wa.me/919810974035" className="bg-neon text-black px-5 py-2 rounded-full text-sm font-bold hover:opacity-90 transition-opacity">Contact Us</a>
                             </div>
@@ -140,11 +188,10 @@
                                 {isMenuOpen ? <Icon name="x" /> : <Icon name="menu" />}
                             </button>
                         </div>
-                        {/* Mobile Menu */}
                         {isMenuOpen && (
                             <div className="md:hidden glass border-t border-white/10 flex flex-col p-6 gap-6 animate-fade-in shadow-2xl">
                                 <a href="#services" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">Services</a>
-                                <a href="#about" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">About</a>
+                                <a href="#about" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">Founder</a>
                                 <a href="#portfolio" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium">Portfolio</a>
                                 <a href="https://wa.me/919810974035" className="text-neon font-bold text-lg flex items-center gap-2">
                                     WhatsApp Now <Icon name="arrowRight" size={18}/>
@@ -153,60 +200,55 @@
                         )}
                     </nav>
 
-                    {/* Hero Section */}
-                    <header className="pt-40 pb-20 px-6 max-w-7xl mx-auto text-center md:text-left flex flex-col md:flex-row items-center gap-12">
-                        <div className="flex-1">
-                            <h2 className="text-neon font-semibold tracking-widest uppercase text-xs mb-4 animate-fade-in" style={{animationDelay: '0.1s'}}>Empowering SMEs</h2>
-                            <h1 className="text-5xl md:text-8xl font-bold leading-tight mb-6 animate-fade-in" style={{animationDelay: '0.2s'}}>
+                    {/* Hero Section - Strict Left Alignment */}
+                    <header className="pt-48 pb-24 px-6 md:px-12 max-w-7xl mx-auto text-left">
+                        <div className="max-w-4xl">
+                            <h2 className="text-neon font-semibold tracking-widest uppercase text-xs mb-4 animate-fade-in">Empowering SMEs</h2>
+                            <h1 className="text-5xl md:text-8xl font-bold leading-tight mb-8 animate-fade-in">
                                 Automate Growth. <br/>
-                                <span className="text-white/40">Scale Saarrthi.</span>
+                                <span className="text-white/40">Scale With Saarrthi.</span>
                             </h1>
-                            <p className="text-gray-400 text-lg md:text-xl mb-10 max-w-xl leading-relaxed animate-fade-in" style={{animationDelay: '0.3s'}}>
-                                We build digital infrastructure for SMEs to scale without the manual overhead. Custom CRMs, Dashboards, and Workflows designed for the next generation of business.
+                            <p className="text-gray-400 text-lg md:text-xl mb-12 max-w-xl leading-relaxed animate-fade-in">
+                                We build digital infrastructure for SMEs to scale without the manual overhead. Custom systems designed for the next generation of business.
                             </p>
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start animate-fade-in" style={{animationDelay: '0.4s'}}>
-                                <a href="https://wa.me/919810974035" className="bg-neon text-black px-10 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,197,94,0.3)]">
+                            <div className="flex flex-col sm:flex-row gap-5 mb-24 animate-fade-in">
+                                <a href="https://wa.me/919810974035" className="bg-neon text-black px-12 py-5 rounded-2xl font-bold flex items-center justify-center gap-2 hover:scale-105 transition-all">
                                     Talk on WhatsApp <Icon name="arrowRight" size={20}/>
                                 </a>
-                                <a href="#services" className="glass px-10 py-4 rounded-2xl font-semibold hover:bg-white/10 transition-all">
+                                <a href="#services" className="glass px-12 py-5 rounded-2xl font-semibold hover:bg-white/10 transition-all flex items-center justify-center">
                                     Our Services
                                 </a>
                             </div>
-                            
-                            {/* Hero Stats */}
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mt-16 pt-10 border-t border-white/10 animate-fade-in" style={{animationDelay: '0.5s'}}>
+
+                            {/* Hero Agency Stats Row */}
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-10 md:gap-20 border-t border-white/10 pt-12 animate-fade-in">
                                 <div>
-                                    <div className="text-4xl font-bold text-neon mb-1">100+</div>
-                                    <div className="text-gray-500 text-sm font-medium uppercase tracking-wider">Hours Saved/Mo</div>
+                                    <div className="text-neon text-5xl font-bold mb-2">100+</div>
+                                    <div className="text-gray-500 text-[11px] uppercase tracking-widest font-bold leading-tight">Hours Saved<br/>Per Month</div>
                                 </div>
                                 <div>
-                                    <div className="text-4xl font-bold text-neon mb-1">50+</div>
-                                    <div className="text-gray-500 text-sm font-medium uppercase tracking-wider">SMEs Empowered</div>
+                                    <div className="text-neon text-5xl font-bold mb-2">₹330Cr+</div>
+                                    <div className="text-gray-500 text-[11px] uppercase tracking-widest font-bold leading-tight">Revenue<br/>Scaled</div>
                                 </div>
                                 <div className="hidden md:block">
-                                    <div className="text-4xl font-bold text-neon mb-1">24/7</div>
-                                    <div className="text-gray-500 text-sm font-medium uppercase tracking-wider">Active Monitoring</div>
+                                    <div className="text-neon text-5xl font-bold mb-2">50%</div>
+                                    <div className="text-gray-500 text-[11px] uppercase tracking-widest font-bold leading-tight">Operations<br/>Automated</div>
                                 </div>
                             </div>
                         </div>
                     </header>
 
-                    {/* Services Section */}
-                    <section id="services" className="py-24 px-6 max-w-7xl mx-auto">
-                        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-4">
-                            <div className="max-w-xl">
-                                <h2 className="text-3xl md:text-5xl font-bold mb-4">Our Expertise</h2>
-                                <p className="text-gray-400 text-lg">Tailored automation solutions to eliminate bottlenecks and maximize efficiency.</p>
-                            </div>
-                            <a href="mailto:therishabhsh.social@gmail.com" className="text-neon font-bold flex items-center gap-2 group">
-                                Custom Request <Icon name="arrowRight" size={20} className="group-hover:translate-x-2 transition-transform"/>
-                            </a>
+                    {/* Expertise Section (Restored) */}
+                    <section id="services" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+                        <div className="text-left mb-16">
+                            <h2 className="text-4xl md:text-6xl font-bold mb-6">Our Expertise</h2>
+                            <p className="text-gray-400 text-lg max-w-2xl leading-relaxed">Tailored automation solutions to eliminate bottlenecks and maximize efficiency.</p>
                         </div>
-                        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+                        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8">
                             {services.map((s, i) => (
-                                <div key={i} className="glass p-10 rounded-[32px] hover:border-neon/50 transition-all group hover:-translate-y-2">
-                                    <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-neon mb-8 group-hover:bg-neon group-hover:text-black transition-all shadow-inner">
-                                        <Icon name={s.icon} size={28} />
+                                <div key={i} className="glass p-10 rounded-[40px] hover:border-neon/50 transition-all group">
+                                    <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-neon mb-8 group-hover:bg-neon group-hover:text-black transition-all">
+                                        <Icon name={s.icon} size={32} />
                                     </div>
                                     <h3 className="text-2xl font-bold mb-4">{s.title}</h3>
                                     <p className="text-gray-400 leading-relaxed text-sm md:text-base">{s.desc}</p>
@@ -215,84 +257,89 @@
                         </div>
                     </section>
 
-                    {/* About Rishabh */}
-                    <section id="about" className="py-24 px-6 max-w-7xl mx-auto">
-                        <div className="glass rounded-[48px] overflow-hidden flex flex-col lg:flex-row shadow-2xl">
-                            <div className="lg:w-2/5 h-[450px] lg:h-auto bg-gray-900 relative">
-                                <img 
-                                    src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1000&auto=format&fit=crop" 
-                                    className="w-full h-full object-cover grayscale brightness-75 hover:grayscale-0 transition-all duration-700"
-                                    alt="Rishabh"
-                                />
+                    {/* About Section - 30/70 Layout */}
+                    <section id="about" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+                        <div className="glass rounded-[56px] overflow-hidden flex flex-col md:flex-row shadow-2xl">
+                            {/* 30% Image Column */}
+                            <div className="md:w-[35%] h-[500px] md:h-auto bg-gray-900 relative">
+                                <img src="rishabh.jpeg" className="w-full h-full object-cover grayscale brightness-90 hover:grayscale-0 transition-all duration-700" alt="Rishabh Sharma" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent"></div>
-                                <div className="absolute bottom-8 left-8">
-                                    <p className="text-neon font-black text-4xl opacity-20 italic select-none uppercase tracking-tighter">OPERATOR</p>
+                                <div className="absolute bottom-10 left-10">
+                                    <p className="text-neon font-black text-4xl opacity-20 italic uppercase tracking-tighter">THE OPERATOR</p>
                                 </div>
                             </div>
-                            <div className="lg:w-3/5 p-10 md:p-20 flex flex-col justify-center">
-                                <span className="text-neon font-bold uppercase tracking-[0.2em] text-xs mb-4">The Architect of Saarrthi</span>
+                            {/* 70% Content Column */}
+                            <div className="md:w-[65%] p-12 md:p-24 flex flex-col justify-center text-left">
+                                <span className="text-neon font-bold uppercase tracking-[0.2em] text-xs mb-4">Strategic Execution</span>
                                 <h2 className="text-4xl md:text-6xl font-bold mb-8">Rishabh Sharma</h2>
                                 <p className="text-gray-300 text-lg md:text-xl leading-relaxed mb-8 opacity-90">
-                                    I help founders scale. Not in theory, but through high-impact execution. At Poshn, I led institutional sales to <strong>₹330 Cr+ ($40M) revenue</strong> profitably while managing a team of 8. 
+                                    I help founders bridge the gap between strategy and scale. As <strong>EIR @ Poshn</strong>, I led institutional growth to scale revenue to <strong>₹330 Cr+ ($40M) profitably</strong>.
                                 </p>
-                                <p className="text-gray-400 text-base md:text-lg leading-relaxed mb-10">
-                                    My philosophy is simple: <strong>Execution > Strategy</strong>. I’ve designed automation systems that slashed manual operations by <strong>50%</strong> and successfully managed <strong>India's largest student-run hackathon</strong> with 3,200+ registrations. Saarrthi is where I apply this "Efficiency-First" DNA to empower SMEs with enterprise-grade systems.
+                                <p className="text-gray-400 text-base md:text-lg leading-relaxed mb-12">
+                                    I specialize in designing systems that cut manual work by <strong>50%</strong>. Execution > Strategy is my core DNA. At Saarrthi, I leverage this background to build high-performance business automations for SMEs.
                                 </p>
                                 
-                                <div className="grid grid-cols-2 gap-4 mb-10">
-                                    <div className="glass p-4 rounded-2xl flex items-center gap-3">
-                                        <Icon name="chart" size={18} className="text-neon" />
-                                        <div>
-                                            <div className="text-white font-bold text-sm">$40M+ Revenue</div>
-                                            <div className="text-gray-500 text-[10px] uppercase">Scaled at Poshn</div>
-                                        </div>
+                                <div className="grid grid-cols-2 gap-6 mb-12">
+                                    <div className="glass p-8 rounded-[36px] border-neon/10">
+                                        <div className="text-neon text-4xl font-black mb-2">₹330Cr+</div>
+                                        <div className="text-gray-500 text-[10px] uppercase tracking-widest font-bold">Revenue Scaled</div>
                                     </div>
-                                    <div className="glass p-4 rounded-2xl flex items-center gap-3">
-                                        <Icon name="zap" size={18} className="text-neon" />
-                                        <div>
-                                            <div className="text-white font-bold text-sm">50% Ops Cut</div>
-                                            <div className="text-gray-500 text-[10px] uppercase">Manual Savings</div>
-                                        </div>
+                                    <div className="glass p-8 rounded-[36px] border-neon/10">
+                                        <div className="text-neon text-4xl font-black mb-2">50%</div>
+                                        <div className="text-gray-500 text-[10px] uppercase tracking-widest font-bold">Manual Ops Cut</div>
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap gap-4">
-                                    <a href="https://linkedin.com/in/therishabhsh" target="_blank" className="flex items-center gap-3 px-6 py-3 glass rounded-2xl hover:text-neon transition-all hover:border-neon/40">
-                                        <Icon name="linkedin" size={20}/>
-                                        <span className="font-semibold">LinkedIn</span>
-                                    </a>
-                                    <a href="mailto:therishabhsh.social@gmail.com" className="flex items-center gap-3 px-6 py-3 glass rounded-2xl hover:text-neon transition-all hover:border-neon/40">
-                                        <Icon name="mail" size={20}/>
-                                        <span className="font-semibold">Email</span>
-                                    </a>
+                                <div className="flex gap-6">
+                                    <a href="https://linkedin.com/in/therishabhsh" target="_blank" className="p-5 glass rounded-2xl hover:text-neon transition-all border border-white/10 hover:border-neon/50"><Icon name="linkedin" /></a>
+                                    <a href="mailto:therishabhsh.social@gmail.com" className="p-5 glass rounded-2xl hover:text-neon transition-all border border-white/10 hover:border-neon/50"><Icon name="mail" /></a>
                                 </div>
                             </div>
                         </div>
                     </section>
 
-                    {/* Portfolio */}
-                    <section id="portfolio" className="py-24 overflow-hidden">
-                        <div className="max-w-7xl mx-auto px-6 mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                            <div>
-                                <h2 className="text-4xl font-bold mb-4">Success Stories</h2>
-                                <p className="text-gray-400 text-lg">Real-world impact through digital transformation.</p>
-                            </div>
-                            <div className="flex gap-4">
-                                <span className="text-gray-500 text-sm font-medium">Swipe to explore →</span>
+                    {/* Portfolio Section */}
+                    <section id="portfolio" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+                        <div className="text-center mb-20">
+                            <h2 className="text-4xl md:text-6xl font-bold mb-8">Success Stories</h2>
+                            <p className="text-gray-400 mb-12">Select a category to explore our solutions.</p>
+                            
+                            <div className="flex flex-wrap justify-center gap-3 p-2 glass rounded-full max-w-fit mx-auto overflow-hidden">
+                                {['Portals', 'CRMs', 'Automations', 'Web Ordering'].map(tab => (
+                                    <button 
+                                        key={tab}
+                                        onClick={() => setActiveTab(tab)}
+                                        className={`px-8 py-3 rounded-full text-sm font-bold transition-all ${activeTab === tab ? 'tab-active' : 'hover:text-neon'}`}
+                                    >
+                                        {tab}
+                                    </button>
+                                ))}
                             </div>
                         </div>
-                        
-                        <div className="flex gap-8 overflow-x-auto portfolio-scroll px-6 md:px-[calc((100vw-1280px)/2+24px)] pb-12">
-                            {portfolio.map((p, i) => (
-                                <div key={i} className="min-w-[320px] md:min-w-[450px] aspect-[4/5] glass rounded-[40px] overflow-hidden relative group">
-                                    <img src={p.img} className="w-full h-full object-cover opacity-50 group-hover:opacity-70 group-hover:scale-105 transition-all duration-1000" alt={p.title}/>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
-                                    <div className="absolute bottom-0 left-0 p-10 w-full">
-                                        <span className="bg-neon/10 text-neon px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 inline-block">{p.category}</span>
-                                        <h3 className="text-3xl font-bold mt-2">{p.title}</h3>
-                                        <button className="mt-6 flex items-center gap-3 text-sm font-bold text-white/60 group-hover:text-neon transition-colors">
-                                            Case Study <Icon name="external" size={16}/>
-                                        </button>
+
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                            {filteredPortfolio.map((p, i) => (
+                                <div key={i} className="glass rounded-[48px] overflow-hidden flex flex-col hover:border-neon/30 transition-all group animate-fade-in" style={{animationDelay: `${i*0.05}s`}}>
+                                    <div className="aspect-[16/10] relative overflow-hidden">
+                                        <img src={p.img} className="w-full h-full object-cover grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" alt={p.title}/>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                                        <span className="absolute top-8 right-8 bg-black/50 backdrop-blur-md border border-white/10 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
+                                            {p.category}
+                                        </span>
+                                    </div>
+                                    <div className="p-10 flex flex-col flex-grow text-left">
+                                        <h3 className="text-2xl font-bold mb-4">{p.title}</h3>
+                                        <p className="text-gray-400 text-sm leading-relaxed mb-8 flex-grow opacity-80">{p.desc}</p>
+                                        <div className="flex flex-wrap gap-3">
+                                            <a href={p.primaryLink.url} target="_blank" className="flex items-center gap-2 px-6 py-3 bg-neon text-black rounded-2xl text-xs font-bold hover:scale-105 transition-all">
+                                                {p.primaryLink.label} <Icon name="external" size={14}/>
+                                            </a>
+                                            {p.secondaryLink && (
+                                                <a href={p.secondaryLink.url} target="_blank" className="flex items-center gap-2 px-6 py-3 glass rounded-2xl text-xs font-bold hover:bg-white/10 transition-all">
+                                                    {p.secondaryLink.label} <Icon name="external" size={14}/>
+                                                </a>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -300,19 +347,19 @@
                     </section>
 
                     {/* Testimonials */}
-                    <section className="py-24 px-6">
-                        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10">
+                    <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+                        <div className="grid md:grid-cols-2 gap-12">
                             {testimonials.map((t, i) => (
-                                <div key={i} className="p-10 rounded-[32px] glass hover:bg-white/[0.05] transition-colors relative overflow-hidden">
-                                    <div className="absolute -top-4 -right-4 text-neon opacity-10">
-                                        <Icon name="message" size={120} />
+                                <div key={i} className="p-12 rounded-[48px] glass hover:bg-white/[0.03] transition-colors relative overflow-hidden text-left">
+                                    <div className="absolute -top-6 -right-6 text-neon opacity-10">
+                                        <Icon name="message" size={140} />
                                     </div>
-                                    <p className="text-xl md:text-2xl font-medium text-gray-200 mb-8 relative z-10 leading-relaxed italic">"{t.text}"</p>
-                                    <div className="flex items-center gap-4 relative z-10">
-                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-neon to-green-800"></div>
+                                    <p className="text-xl md:text-2xl font-medium text-gray-200 mb-10 relative z-10 leading-relaxed italic opacity-90">"{t.text}"</p>
+                                    <div className="flex items-center gap-5 relative z-10">
+                                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-neon to-green-800 shadow-lg"></div>
                                         <div>
-                                            <div className="font-bold text-lg">{t.name}</div>
-                                            <div className="text-neon text-sm font-medium tracking-wide uppercase">{t.role}</div>
+                                            <div className="font-bold text-xl">{t.name}</div>
+                                            <div className="text-neon text-sm font-medium tracking-wide uppercase opacity-80">{t.role}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -320,58 +367,44 @@
                         </div>
                     </section>
 
-                    {/* Final CTA */}
-                    <section className="py-32 px-6">
-                        <div className="max-w-5xl mx-auto glass p-12 md:p-24 rounded-[64px] border-neon/30 text-center relative overflow-hidden shadow-2xl">
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-neon to-transparent opacity-50"></div>
-                            <h2 className="text-4xl md:text-7xl font-bold mb-8">Let's solve your business problems.</h2>
+                    {/* Final CTA Section (Restored) */}
+                    <section className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+                        <div className="glass p-16 md:p-32 rounded-[64px] border-neon/20 text-center relative overflow-hidden shadow-3xl bg-gradient-to-br from-white/[0.02] to-transparent">
+                            <div className="absolute -top-10 -right-10 w-64 h-64 bg-neon opacity-[0.03] blur-[100px]"></div>
+                            <h2 className="text-4xl md:text-7xl font-bold mb-8">Ready to automate your growth?</h2>
                             <p className="text-gray-400 mb-12 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                                No generic software. Just custom engineering built to make your business run while you sleep.
+                                No generic solutions. Just custom digital infrastructure built to make your business run efficiently while you sleep.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-                                <a href="https://wa.me/919810974035" className="bg-neon text-black px-12 py-5 rounded-2xl font-black text-lg hover:scale-105 transition-all shadow-xl hover:shadow-neon/20">
-                                    WhatsApp Now
+                                <a href="https://wa.me/919810974035" className="bg-neon text-black px-14 py-5 rounded-2xl font-black text-lg hover:scale-105 transition-all shadow-xl hover:shadow-neon/20">
+                                    Start on WhatsApp
                                 </a>
-                                <a href="mailto:therishabhsh.social@gmail.com" className="glass px-12 py-5 rounded-2xl font-bold text-lg hover:bg-white/10 transition-all">
-                                    Email Agency
+                                <a href="mailto:therishabhsh.social@gmail.com" className="glass px-14 py-5 rounded-2xl font-bold text-lg hover:bg-white/10 transition-all border border-white/10">
+                                    Email Rishabh
                                 </a>
                             </div>
                         </div>
                     </section>
 
                     {/* Footer */}
-                    <footer className="py-16 border-t border-white/5 px-6 mt-10 bg-black">
-                        <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-12 items-start">
-                            <div className="flex flex-col gap-6">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 bg-neon rounded-lg flex items-center justify-center text-black font-bold">S</div>
-                                    <span className="font-bold text-2xl tracking-tighter">Saarrthi</span>
+                    <footer className="py-24 border-t border-white/5 px-6 md:px-12 mt-20 bg-[#070707]">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-16">
+                            <div className="flex flex-col items-center md:items-start text-left">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="w-10 h-10 bg-neon rounded-xl flex items-center justify-center text-black font-bold">S</div>
+                                    <span className="font-bold text-3xl tracking-tighter">Saarrthi</span>
                                 </div>
-                                <p className="text-gray-500 max-w-xs leading-relaxed">
-                                    Strategic automation for Small and Medium Enterprises. Built in India for the global stage.
-                                </p>
+                                <p className="text-gray-500 text-sm max-w-xs leading-relaxed">Empowering SMEs through strategic automation and high-impact digital engineering.</p>
                             </div>
                             
-                            <div className="flex flex-col gap-4">
-                                <h4 className="font-bold text-sm uppercase tracking-widest text-gray-400">Navigation</h4>
-                                <div className="flex flex-col gap-2">
-                                    <a href="#services" className="text-gray-500 hover:text-neon transition-colors">Services</a>
-                                    <a href="#about" className="text-gray-500 hover:text-neon transition-colors">About</a>
-                                    <a href="#portfolio" className="text-gray-500 hover:text-neon transition-colors">Portfolio</a>
-                                </div>
+                            <div className="flex gap-6">
+                                <a href="https://linkedin.com/in/therishabhsh" target="_blank" className="p-6 glass rounded-3xl hover:text-neon hover:border-neon transition-all border border-white/5"><Icon name="linkedin" size={32}/></a>
+                                <a href="mailto:therishabhsh.social@gmail.com" className="p-6 glass rounded-3xl hover:text-neon hover:border-neon transition-all border border-white/5"><Icon name="mail" size={32}/></a>
+                                <a href="https://wa.me/919810974035" target="_blank" className="p-6 glass rounded-3xl hover:text-neon hover:border-neon transition-all border border-white/5"><Icon name="message" size={32}/></a>
                             </div>
 
-                            <div className="flex flex-col gap-6">
-                                <h4 className="font-bold text-sm uppercase tracking-widest text-gray-400">Social</h4>
-                                <div className="flex gap-4">
-                                    <a href="https://linkedin.com/in/therishabhsh" className="p-4 glass rounded-2xl hover:text-neon hover:border-neon transition-all"><Icon name="linkedin" size={24}/></a>
-                                    <a href="mailto:therishabhsh.social@gmail.com" className="p-4 glass rounded-2xl hover:text-neon hover:border-neon transition-all"><Icon name="mail" size={24}/></a>
-                                    <a href="https://wa.me/919810974035" className="p-4 glass rounded-2xl hover:text-neon hover:border-neon transition-all"><Icon name="message" size={24}/></a>
-                                </div>
-                                <div className="text-gray-600 text-xs mt-4">
-                                    © 2026 Saarrthi. All rights reserved. <br/>
-                                    Designed with precision by Rishabh Sharma.
-                                </div>
+                            <div className="text-gray-600 text-[11px] uppercase tracking-[0.3em] font-semibold">
+                                © 2024 Saarrthi Automation
                             </div>
                         </div>
                     </footer>
