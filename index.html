@@ -140,20 +140,6 @@ const portfolio = [
                     secondaryLink: { label: "Backend CRM", url: "interiorCRM.html" }
                 },
                 { 
-                    title: "View Portal", 
-                    category: "Portals", 
-                    img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800",
-                    desc: "Real-time, secure data visualization portal for stakeholders with strict access controls.",
-                    primaryLink: { label: "Live Preview", url: "https://script.google.com/macros/s/AKfycbw9ynIVaHRe4EuSmVtDPjTMSpHNWKAygZXcU8q8Vm5FdeFxFOvVcz3s4JSIBLw7MKx6ig/exec" }
-                },
-                { 
-                    title: "Compliance Organizer", 
-                    category: "Automations", 
-                    img: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800",
-                    desc: "Compliance automation for Chartered Accountant Firms & NBFCs to manage massive document flows.",
-                    primaryLink: { label: "Live Preview", url: "https://script.google.com/macros/s/AKfycbzQvcHEn_PvifrtGNA7Ixmw680gjB-TGa1SFEk8qSDWnGFY43JzcVFNt_Hrs7hA5PLRPw/exec" }
-                },
-                { 
                     title: "ZipShine Services", 
                     category: "Web Ordering", 
                     img: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800",
@@ -187,6 +173,20 @@ const portfolio = [
                     img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800",
                     desc: "Automated lead collection and trial booking platform for a Delhi based Gym chain.",
                     primaryLink: { label: "Project View", url: "Q3Gym.html" }
+                },
+                { 
+                    title: "Compliance Organizer", 
+                    category: "Automations", 
+                    img: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800",
+                    desc: "Compliance automation for Chartered Accountant Firms & NBFCs to manage massive document flows.",
+                    primaryLink: { label: "Live Preview", url: "https://script.google.com/macros/s/AKfycbzQvcHEn_PvifrtGNA7Ixmw680gjB-TGa1SFEk8qSDWnGFY43JzcVFNt_Hrs7hA5PLRPw/exec" }
+                },
+                { 
+                    title: "View Portal", 
+                    category: "Portals", 
+                    img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800",
+                    desc: "Real-time, secure data visualization portal for stakeholders with strict access controls.",
+                    primaryLink: { label: "Live Preview", url: "https://script.google.com/macros/s/AKfycbw9ynIVaHRe4EuSmVtDPjTMSpHNWKAygZXcU8q8Vm5FdeFxFOvVcz3s4JSIBLw7MKx6ig/exec" }
                 }
             ];
 
@@ -324,7 +324,7 @@ const portfolio = [
                                 <div className="flex-grow"></div>
                                 <div className="flex items-center gap-4 bg-white/5 p-2 rounded-full border border-white/5">
                                     <div className="flex overflow-x-auto no-scrollbar gap-2 max-w-[280px] md:max-w-none">
-                                        {['Portals', 'Automations', 'CRMs', 'Web Ordering'].map(tab => (
+                                        {['Automations', 'CRMs','Portals', 'Web Ordering'].map(tab => (
                                             <button key={tab} onClick={() => setActiveTab(tab)} className={`whitespace-nowrap px-6 py-2.5 rounded-full text-xs font-bold transition-all ${activeTab === tab ? 'tab-active' : 'text-gray-500'}`}>
                                                 {tab}
                                             </button>
