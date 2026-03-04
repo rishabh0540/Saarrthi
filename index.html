@@ -90,7 +90,7 @@
 
         const App = () => {
             const [isMenuOpen, setIsMenuOpen] = useState(false);
-            const [activeTab, setActiveTab] = useState('Automations');
+            const [activeTab, setActiveTab] = useState('Top');
             const [selectedServices, setSelectedServices] = useState([]);
 
             // Persistent Scroll Animation Logic
@@ -126,7 +126,7 @@
 const portfolio = [
                 { 
                     title: "Custom CRM Portal", 
-                    category: "CRMs", 
+                    category: "Top", 
                     img: "https://images.unsplash.com/photo-1622782914767-404fb9ab3f57?auto=format&fit=crop&q=80&w=800",
                     desc: "Custom internal CRM for a 1000Cr B2B organization for enterprise client acquisition & lead tracking.",
                     primaryLink: { label: "Live Preview", url: "https://script.google.com/macros/s/AKfycbzxQEqcHGzeQdf54Blr1AHKrvP_Mj_ebjpHSg2AF_fLILtw2Tcija8CjA-KpGKCJ-moMw/exec" }
@@ -148,21 +148,21 @@ const portfolio = [
                 },
                 { 
                     title: "Pitch Deck Generator", 
-                    category: "Automations", 
+                    category: "Top", 
                     img: "https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?auto=format&fit=crop&q=80&w=800",
                     desc: "One-click professional proposal generation tool for high-ticket sales teams. Saves 40+ hrs/month",
                     primaryLink: { label: "Project View", url: "proposalgenerator.html" }
                 },
                 { 
                     title: "Spice Grill Flame", 
-                    category: "Web Ordering", 
+                    category: "Top", 
                     img: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800",
                     desc: "Digitalized customer portal for whatsapp-ordering. INR 40K+ saved per month from commissions & employee theft.",
                     primaryLink: { label: "Project View", url: "sgfshaktinagar.html" }
                 },
                 { 
                     title: "Live Data Dashboard", 
-                    category: "Portals", 
+                    category: "Top", 
                     img: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&q=80&w=800",
                     desc: "Dynamic live-sync dashboard for tracking KPIs across business units. Saves owner 1hr of meeting time daily.",
                     primaryLink: { label: "Project View", url: "dataTracker.html" }
@@ -176,7 +176,7 @@ const portfolio = [
                 },
                 { 
                     title: "Compliance Portal", 
-                    category: "Automations", 
+                    category: "Top", 
                     img: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800",
                     desc: "Doc collection automation for CA Firms & NBFCs to manage massive document flows. Saves 50K+ in employee costs per month.",
                     primaryLink: { label: "Live Preview", url: "https://script.google.com/macros/s/AKfycbzQvcHEn_PvifrtGNA7Ixmw680gjB-TGa1SFEk8qSDWnGFY43JzcVFNt_Hrs7hA5PLRPw/exec" }
@@ -324,7 +324,7 @@ const portfolio = [
                                 <div className="flex-grow"></div>
                                 <div className="flex items-center gap-4 bg-white/5 p-2 rounded-full border border-[#22c55e]">
                                     <div className="flex overflow-x-auto no-scrollbar gap-2 max-w-[280px] md:max-w-none">
-                                        {['Automations', 'CRMs','Portals', 'Web Ordering'].map(tab => (
+                                        {['Top', 'Automations', 'CRMs','Portals', 'Web Ordering'].map(tab => (
                                             <button key={tab} onClick={() => setActiveTab(tab)} className={`whitespace-nowrap px-6 py-2.5 rounded-full text-xs font-bold transition-all ${activeTab === tab ? 'tab-active' : 'text-gray-500'}`}>
                                                 {tab}
                                             </button>
