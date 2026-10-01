@@ -129,7 +129,7 @@
         const HomeView = ({ setView }) => {
             const handleOfferClick = (offerName) => {
                 const msg = `Hi SGF Shaktinagar, I'm interested in the ${offerName} offer!`;
-                window.open(`https://wa.me/918860950400?text=${encodeURIComponent(msg)}`);
+                window.open(`https://wa.me/919810974035?text=${encodeURIComponent(msg)}`);
             };
 
             const socials = [
@@ -468,7 +468,7 @@
                                 </div>
                             </div>
                             <button 
-                                onClick={() => window.open(`https://wa.me/918860950400?text=Hi, I want to book the ${pkg.name} Party Package for 30+ people.`)}
+                                onClick={() => window.open(`https://wa.me/919810974035?text=Hi, I want to book the ${pkg.name} Party Package for 30+ people.`)}
                                 className="w-full bg-rose-600 text-white py-5 rounded-[2rem] font-black shadow-xl shadow-rose-200 transition-all active:scale-95"
                             >
                                 Book This Plan
@@ -874,7 +874,7 @@
                 if (!userData.name || !userData.mobile) return alert("Please enter your details first");
                 const orderText = cart.map(i => `${i.qty}x ${i.name} (${i.portion})`).join('%0A');
                 const finalStr = `New Order from ${userData.name} (${userData.mobile})%0A%0AItems:%0A${orderText}%0A%0ATotal: ₹${cart.reduce((a,b)=>a+(b.price*b.qty), 0)}`;
-                window.open(`https://wa.me/918860950400?text=${finalStr}`);
+                window.open(`https://wa.me/919810974035?text=${finalStr}`);
             };
 
             return (
